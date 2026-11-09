@@ -1,0 +1,1661 @@
+<title>Project Radar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Lumina · Luminous Blue 2027 */
+:root{
+  --chalk:#F7F6F2;--warm:#EDE8D8;--maize:#F5E6A3;--stone:#D8D6CE;--ash:#888780;--ink:#444441;--void:#1C1A18;
+  --deep-green:#1C2130;--forest:#252C3E;--dust:#38405A;--sage:#C6E8D4;
+  --lb-ice:#EAEBFF;--lb-ghost:#C5C8FF;--lb-mist:#7B80FF;--lb-glow:#4B52FF;--lb-core:#1B1FE8;--lb-deep:#0E11B0;
+  --success:#1A5C42;--success-bg:#C6E8D4;--warning:#8A6200;--warning-bg:#FFF3C4;--error:#A32D2D;--error-bg:#FCEBEB;
+  --surface-page:var(--chalk);--surface-alt:var(--warm);--surface-card:#FBFAF7;--surface-tinted:var(--lb-ice);
+  --text-default:var(--ink);--text-strong:var(--void);--text-muted:#6E6D66;--text-on-tinted:var(--lb-deep);--text-link:var(--lb-core);
+  --border-default:var(--stone);--border-tinted:var(--lb-ghost);
+  --f-display:"Fraunces",Georgia,serif;--f-body:"DM Sans",-apple-system,"Segoe UI",sans-serif;--f-mono:"JetBrains Mono","Courier New",monospace;
+  --r-sm:4px;--r-md:8px;--r-lg:12px;--r-xl:16px;--r-full:9999px;
+  --pad:clamp(16px,4vw,32px);--ease:cubic-bezier(.16,1,.3,1);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --surface-page:#0A0B1A;--surface-alt:#12152B;--surface-card:#12152B;--surface-tinted:rgba(27,31,232,.15);
+  --text-default:var(--stone);--text-strong:var(--chalk);--text-muted:#A9ABC9;--text-on-tinted:var(--lb-mist);--text-link:var(--lb-mist);
+  --border-default:#252847;--border-tinted:rgba(123,128,255,.3);
+  --success:#8FD4AE;--success-bg:rgba(26,92,66,.35);--warning:#F2C94C;--warning-bg:rgba(176,125,0,.22);--error:#F29B9B;--error-bg:rgba(163,45,45,.28);}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --surface-page:#0A0B1A;--surface-alt:#12152B;--surface-card:#12152B;--surface-tinted:rgba(27,31,232,.15);
+  --text-default:var(--stone);--text-strong:var(--chalk);--text-muted:#A9ABC9;--text-on-tinted:var(--lb-mist);--text-link:var(--lb-mist);
+  --border-default:#252847;--border-tinted:rgba(123,128,255,.3);
+  --success:#8FD4AE;--success-bg:rgba(26,92,66,.35);--warning:#F2C94C;--warning-bg:rgba(176,125,0,.22);--error:#F29B9B;--error-bg:rgba(163,45,45,.28);}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{background:var(--surface-page);color:var(--text-default);font:400 15px/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:var(--text-link);text-decoration:none}a:hover{text-decoration:underline;text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--lb-core);outline-offset:3px}
+.in{max-width:1440px;margin:0 auto;padding-inline:var(--pad)}
+.eyebrow{font:500 .66rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);display:flex;gap:8px;align-items:center}
+.eyebrow b{font-weight:500;color:var(--text-strong)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+/* Header: structure layer, never blue */
+.top{background:var(--deep-green);color:var(--chalk)}
+.bar{display:flex;align-items:center;gap:16px;padding-block:14px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font:700 1.05rem var(--f-display);letter-spacing:-.02em}
+.logo i{width:22px;height:22px;border-radius:6px;background:var(--chalk);display:grid;place-items:center;color:var(--deep-green);font:700 .8rem var(--f-display);font-style:normal}
+.logo span{opacity:.55;font:400 .9rem var(--f-body);letter-spacing:0}
+.stamp{margin-left:auto;font:400 .72rem var(--f-mono);letter-spacing:.06em;color:rgba(247,246,242,.6)}
+.live{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--sage);margin-right:6px;vertical-align:1px}
+.live.off{background:var(--ash)}
+.brief{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);padding-block:clamp(20px,4vw,40px) clamp(24px,4vw,44px);align-items:end}
+.brief .eyebrow{color:rgba(247,246,242,.55)}.brief .eyebrow b{color:var(--chalk)}
+.brief h1{font:400 clamp(1.75rem,3.4vw,2.9rem)/1.1 var(--f-display);letter-spacing:-.03em;margin:12px 0 16px;text-wrap:balance;color:var(--chalk)}
+.brief h1 em{font-style:italic;color:var(--lb-ghost)}
+.brief ul{margin:0;padding:0;list-style:none;display:grid;gap:6px;color:rgba(247,246,242,.78);font-size:.92rem;max-width:62ch}
+.brief li{display:grid;grid-template-columns:14px 1fr;gap:8px}
+.brief li::before{content:"→";color:rgba(247,246,242,.4)}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--dust);border:1px solid var(--dust);border-radius:var(--r-lg);overflow:hidden}
+.kpi{background:var(--forest);padding:16px 18px;display:grid;gap:4px}
+.kpi b{font:500 2.4rem/1 var(--f-display);letter-spacing:-.03em;color:var(--chalk);font-variant-numeric:tabular-nums}
+.kpi span{font:500 .66rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:rgba(247,246,242,.55)}
+.kpi.hot b{color:#F29B9B}.kpi.warn b{color:var(--maize)}
+.kpi small{font-size:.76rem;color:rgba(247,246,242,.5)}
+
+/* Sub-nav tabs */
+.sub{background:var(--forest);position:sticky;top:env(safe-area-inset-top,0px);z-index:200;border-top:1px solid var(--dust)}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding-block:6px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:0;color:rgba(247,246,242,.5);font:500 .86rem var(--f-body);padding:8px 14px;border-radius:var(--r-md);cursor:pointer;white-space:nowrap;transition:color .15s,background .15s}
+.tab:hover{color:rgba(247,246,242,.9)}
+.tab[aria-selected="true"]{color:var(--chalk);background:rgba(247,246,242,.1)}
+.tab .n{font:500 .68rem var(--f-mono);margin-left:6px;padding:1px 6px;border-radius:var(--r-full);background:rgba(247,246,242,.12)}
+.tab .n.hot{background:var(--lb-core);color:#fff}
+.tab .n:empty{display:none}
+
+main.in{padding-block:28px 72px;display:grid;gap:28px}
+.notice{background:var(--surface-tinted);border:1px solid var(--border-tinted);color:var(--text-on-tinted);border-radius:var(--r-lg);padding:12px 16px;font-size:.88rem}
+.sec{display:grid;gap:14px}
+.sec-h{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+.sec-h h2{font:500 1.45rem/1.2 var(--f-display);letter-spacing:-.02em;margin:4px 0 0;color:var(--text-strong)}
+.hint{font-size:.82rem;color:var(--text-muted)}
+
+/* Due map */
+.dm-wrap{border:1px solid var(--border-default);border-radius:var(--r-lg);background:var(--surface-card);overflow-x:auto}
+.dm{display:grid;min-width:760px;font-size:.78rem}
+.dm .c{border-top:1px solid var(--border-default);padding:8px 4px;display:grid;place-items:center;min-height:44px}
+.dm .h{padding:10px 4px 8px;font:500 .64rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);text-align:center;line-height:1.3;border-top:0}
+.dm .h.today{color:var(--text-strong)}
+.dm .h.today::after{content:"";display:block;width:4px;height:4px;border-radius:50%;background:var(--lb-core);margin:4px auto 0}
+.dm .wk{background:color-mix(in srgb,var(--surface-alt) 55%,transparent)}
+.dm .od{background:var(--error-bg)}
+.dm .h.od{color:var(--error)}
+.dm .rl{justify-content:start;place-items:center start;padding-left:16px;font-weight:500;color:var(--text-strong);position:sticky;left:0;background:var(--surface-card);z-index:1}
+.dot{min-width:24px;height:24px;border-radius:var(--r-full);display:grid;place-items:center;font:500 .72rem var(--f-mono);background:var(--forest);color:var(--chalk);padding-inline:6px;cursor:default}
+.dot.od{background:var(--error);color:#fff}
+.dot.td{background:var(--lb-core);color:#fff}
+button.dot{border:0;cursor:pointer;font:500 .72rem var(--f-mono);transition:transform .15s,box-shadow .15s}
+button.dot:hover{transform:scale(1.12);box-shadow:0 0 0 3px var(--surface-tinted)}
+.dm .rl a{color:var(--text-strong)}.dm .rl a:hover{color:var(--text-link)}
+.dm .rl a::after{content:" \2192";color:var(--text-muted);font-weight:400}
+.card{scroll-margin-top:72px;transition:box-shadow .4s,border-color .4s}
+.card.flash{border-color:var(--lb-core);box-shadow:0 0 0 3px var(--surface-tinted)}
+.iss{border-top:1px solid var(--border-default);padding-top:12px}
+.iss summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:8px;font:500 .86rem var(--f-body);color:var(--text-strong)}
+.iss summary::-webkit-details-marker{display:none}
+.iss summary::after{content:"+";font:500 1rem var(--f-mono);color:var(--text-muted)}
+.iss[open] summary::after{content:"\2212"}
+.iss ul{list-style:none;margin:10px 0 0;padding:0;display:grid;max-height:420px;overflow-y:auto}
+.iss li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:9px 0;border-top:1px solid var(--border-default);font-size:.84rem}
+.iss li:first-child{border-top:0}
+.iss .it-t{color:var(--text-strong);line-height:1.35;min-width:0}
+.iss .it-t a{color:inherit}.iss .it-t a:hover{color:var(--text-link)}
+.iss .it-m{grid-column:1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:.72rem;color:var(--text-muted)}
+.iss li.od .it-m .mono{color:var(--error)}
+.iss select.st{grid-row:1/span 2;grid-column:2;font:500 .74rem var(--f-body);background:var(--surface-page);color:var(--text-strong);border:1px solid var(--border-default);border-radius:var(--r-sm);padding:5px 8px;cursor:pointer;max-width:140px}
+.iss select.st:hover{border-color:var(--lb-core)}
+.st-msg{font-size:.72rem}.st-msg.ok{color:var(--success)}.st-msg.bad{color:var(--error)}.st-msg.wait{color:var(--text-muted)}
+
+/* Project cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:16px}
+.card{background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--r-lg);padding:22px;display:grid;gap:16px;align-content:start}
+.ph{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center}
+.mg{width:44px;height:44px;border-radius:50%;background:var(--deep-green);color:var(--chalk);display:grid;place-items:center;font:500 1.15rem var(--f-display)}
+.ph h3{font:500 1.22rem/1.2 var(--f-display);letter-spacing:-.015em;margin:2px 0 0;color:var(--text-strong);text-wrap:balance}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:var(--r-full);padding:4px 10px;font:500 .62rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.h-on_track{color:var(--success);background:var(--success-bg)}.h-at_risk{color:var(--warning);background:var(--warning-bg)}
+.h-late,.h-blocked{color:var(--error);background:var(--error-bg)}.h-unknown{color:var(--text-muted);background:var(--surface-alt)}
+.sum{margin:0;font-size:.9rem;color:var(--text-default);max-width:62ch}
+.prog{display:grid;gap:6px}
+.stack{display:flex;height:8px;border-radius:var(--r-full);overflow:hidden;background:var(--surface-alt);gap:2px}
+.stack i{display:block;height:100%}
+.s-done{background:var(--success)}.s-dated{background:var(--dust)}.s-od{background:var(--error)}.s-nd{background:repeating-linear-gradient(135deg,var(--stone) 0 3px,transparent 3px 6px)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.74rem;color:var(--text-muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--border-default);border-radius:var(--r-md);overflow:hidden}
+.fact{padding:10px 12px;border-left:1px solid var(--border-default);display:grid;gap:2px}
+.fact:nth-child(3n+1){border-left:0}
+.fact:nth-child(n+4){border-top:1px solid var(--border-default)}
+.fact b{font:500 1.1rem var(--f-mono);color:var(--text-strong);font-variant-numeric:tabular-nums}
+.fact span{font-size:.72rem;color:var(--text-muted)}
+.fact.bad b{color:var(--error)}
+.next{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline;font-size:.86rem;padding:10px 12px;background:var(--surface-alt);border-radius:var(--r-md)}
+.next .eyebrow{white-space:nowrap}
+.alerts{display:grid;gap:8px;margin:0;padding:0;list-style:none;font-size:.85rem}
+.alerts li{display:grid;grid-template-columns:8px 1fr;gap:10px;align-items:baseline}
+.sev{width:8px;height:8px;border-radius:50%;background:var(--stone);transform:translateY(-1px)}
+.sev.deploy_failed,.sev.ci_failed,.sev.overdue,.sev.blocker{background:var(--error)}
+.sev.pr_open,.sev.no_date,.sev.stale{background:var(--warning)}
+.links{display:flex;gap:18px;flex-wrap:wrap;font-size:.82rem;border-top:1px solid var(--border-default);padding-top:14px}
+.links a::after{content:" →"}
+
+/* Plan board */
+.filter{display:flex;gap:8px;flex-wrap:wrap}
+#pfilter{align-items:center;margin-bottom:12px}
+.ms{position:relative}
+.ms-b{display:inline-flex;align-items:center;gap:8px;font:500 .8rem var(--f-body);border:1px solid var(--border-default);background:var(--surface-card);color:var(--text-default);border-radius:var(--r-full);padding:6px 12px 6px 14px;cursor:pointer;max-width:240px}
+.ms-b span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-b.on{border-color:#2F3BFF;color:#2F3BFF}
+.ms-p{display:none;position:absolute;z-index:300;top:calc(100% + 6px);left:0;min-width:220px;max-height:320px;overflow:auto;background:var(--surface-card);border:1px solid var(--border-default);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:6px}
+.ms.open .ms-p{display:block}
+.ms-o{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;font:500 .8rem var(--f-body);cursor:pointer;color:var(--text-default)}
+.ms-o:hover{background:color-mix(in srgb,#2F3BFF 8%,transparent)}
+.ms-o input{accent-color:#2F3BFF;margin:0}
+.ms-o i{width:8px;height:8px;border-radius:50%;flex:none}
+.ms-x{font:500 .8rem var(--f-body);background:none;border:0;color:#2F3BFF;cursor:pointer;padding:6px 8px;text-decoration:underline;text-underline-offset:3px}
+.chip{font:500 .8rem var(--f-body);border:1px solid var(--border-default);background:var(--surface-card);color:var(--text-default);border-radius:var(--r-full);padding:6px 14px;cursor:pointer;transition:border-color .15s}
+.chip:hover{border-color:var(--text-muted)}
+.chip[aria-pressed="true"]{border-color:var(--lb-core);color:var(--text-on-tinted);background:var(--surface-tinted)}
+.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:start}
+.col{background:var(--surface-alt);border-radius:var(--r-lg);padding:12px;display:grid;gap:8px;min-width:0}
+.col-h{display:flex;justify-content:space-between;align-items:baseline;padding:2px 4px 6px}
+.col-h h3{margin:0;font:500 1rem var(--f-display);color:var(--text-strong)}
+.col-h span{font:500 .72rem var(--f-mono);color:var(--text-muted)}
+.col.unscheduled .col-h h3{color:var(--warning)}
+.it{background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--r-md);padding:12px;display:grid;gap:8px;font-size:.84rem}
+.it .t{color:var(--text-strong);font-weight:500;line-height:1.35}
+.it .t:hover{color:var(--text-link)}
+.m{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:.72rem;color:var(--text-muted)}
+.ref{font:500 .66rem var(--f-mono);letter-spacing:.04em;color:var(--text-strong);background:var(--surface-alt);padding:2px 6px;border-radius:var(--r-sm)}
+.flag{font:500 .6rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:var(--r-sm);background:var(--surface-alt);color:var(--text-default)}
+.flag.overdue,.flag.blocker,.flag.ci_failed,.flag.deploy_failed{background:var(--error-bg);color:var(--error)}
+.flag.no_date,.flag.stale,.flag.pr_open{background:var(--warning-bg);color:var(--warning)}
+.it select{font:inherit;font-size:.74rem;background:var(--surface-page);color:var(--text-default);border:1px solid var(--border-default);border-radius:var(--r-sm);padding:3px 6px;margin-left:auto}
+.moved{font-size:.74rem;color:var(--success)}
+.empty{color:var(--text-muted);font-size:.84rem;padding:6px 4px}
+
+/* Questions */
+.qlist{display:grid;gap:12px;counter-reset:q}
+.q{display:grid;grid-template-columns:36px 1fr;gap:16px;background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--r-lg);padding:20px}
+.q::before{counter-increment:q;content:counter(q);font:500 1.5rem/1 var(--f-display);color:var(--text-muted)}
+.q-b{display:grid;gap:12px;min-width:0}
+.q p{margin:0;color:var(--text-strong);font-weight:500;font-size:.96rem;max-width:70ch}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opt{font:500 .8rem var(--f-body);border:1px solid var(--border-default);background:var(--surface-page);color:var(--text-default);border-radius:var(--r-md);padding:7px 12px;cursor:pointer;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--lb-core);color:var(--text-on-tinted)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row input{flex:1 1 260px}
+input[type=text],textarea,select.field{font:inherit;width:100%;background:var(--surface-page);color:var(--text-strong);border:1px solid var(--border-default);border-radius:var(--r-md);padding:9px 12px}
+input:focus,textarea:focus,select.field:focus{outline:none;border-color:var(--lb-core);box-shadow:0 0 0 3px var(--surface-tinted)}
+.btn{font:500 .84rem var(--f-body);border-radius:var(--r-md);padding:9px 16px;cursor:pointer;border:1px solid var(--lb-core);background:transparent;color:var(--text-link);transition:background .15s,color .15s;white-space:nowrap}
+.btn:hover{background:var(--surface-tinted)}
+.btn.primary{background:var(--lb-core);color:#fff}.btn.primary:hover{background:var(--lb-glow)}
+.btn:disabled,.opt:disabled{opacity:.45;cursor:default}
+.answered{display:grid;grid-template-columns:36px 1fr;gap:16px;padding:14px 20px;border:1px dashed var(--border-default);border-radius:var(--r-lg);font-size:.86rem;color:var(--text-muted)}
+.answered b{color:var(--success);font-weight:500}
+.err{font-size:.76rem;color:var(--error)}
+
+/* Inbox */
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.list{list-style:none;margin:0;padding:0;display:grid}
+.list li{padding:12px 0;border-top:1px solid var(--border-default);display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.88rem}
+.list li:first-child{border-top:0}
+.src{grid-row:span 2;font:500 .6rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:var(--r-sm);background:var(--surface-alt);align-self:start;margin-top:2px}
+.s{color:var(--text-strong);font-weight:500}
+.w{color:var(--text-muted);font-size:.8rem}
+.time{grid-row:span 2;font:500 .76rem var(--f-mono);color:var(--text-strong);min-width:88px;align-self:start;margin-top:2px}
+
+/* Idea */
+.idea{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;align-items:start}
+.tinted{background:var(--surface-tinted);border-color:var(--border-tinted)}
+.tinted .eyebrow{color:var(--text-on-tinted)}
+label.eyebrow{margin-top:4px}
+.ok{font-size:.82rem;color:var(--success)}
+
+
+
+/* Refresh */
+.stamp{display:flex;align-items:center;gap:10px}
+.rbtn{width:30px;height:30px;border-radius:var(--r-md);border:1px solid rgba(247,246,242,.3);background:transparent;color:var(--chalk);display:grid;place-items:center;cursor:pointer;transition:background .15s,border-color .15s}
+.rbtn:hover{background:rgba(247,246,242,.12);border-color:var(--chalk)}
+.rbtn svg{width:15px;height:15px}
+.rbtn:disabled{cursor:default;opacity:.85}
+.rbtn.spin svg,.xbtn.spin svg{animation:rot 1s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.rstate{font:400 .7rem var(--f-mono);letter-spacing:.04em;color:rgba(247,246,242,.6)}
+.rstate.bad{color:#F29B9B}
+.ph{grid-template-columns:44px 1fr auto auto auto}
+.card .rnote{font-size:.74rem;color:var(--text-muted);margin-top:-6px}
+.card .rnote.bad{color:var(--error)}
+@media (prefers-reduced-motion:reduce){.rbtn.spin svg,.xbtn.spin svg{animation:none}}
+
+/* Full-screen project view */
+.ph{grid-template-columns:44px 1fr auto auto}
+.xbtn{width:36px;height:36px;border-radius:var(--r-md);border:1px solid var(--border-default);background:var(--surface-page);color:var(--text-strong);display:grid;place-items:center;cursor:pointer;transition:border-color .15s,background .15s}
+.xbtn:hover{border-color:var(--lb-core);background:var(--surface-tinted);color:var(--text-on-tinted)}
+.xbtn svg{width:16px;height:16px}
+.full{position:fixed;inset:0;z-index:400;background:var(--surface-page);overflow-y:auto;overscroll-behavior:contain}
+.full-top{position:sticky;top:0;z-index:2;background:var(--deep-green);color:var(--chalk);padding-top:env(safe-area-inset-top,0px)}
+.full-top .hdr{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:16px;align-items:center;padding-block:16px}
+.full-top .mg{width:52px;height:52px;background:var(--chalk);color:var(--deep-green);font-size:1.4rem}
+.full-top h2{font:400 clamp(1.4rem,2.6vw,2.1rem)/1.1 var(--f-display);letter-spacing:-.02em;margin:4px 0 0;color:var(--chalk);text-wrap:balance}
+.full-top .eyebrow{color:rgba(247,246,242,.6)}
+.full-top .eyebrow b{color:var(--chalk)}
+.full-top .acts{display:flex;gap:10px;align-items:center}
+.full-top .xbtn{background:transparent;border-color:rgba(247,246,242,.3);color:var(--chalk)}
+.full-top .xbtn:hover{background:rgba(247,246,242,.12);border-color:var(--chalk);color:var(--chalk)}
+.full-links{display:flex;gap:18px;flex-wrap:wrap;font-size:.82rem;padding-bottom:14px}
+.full-links a{color:var(--lb-ghost)}.full-links a::after{content:" \2192"}
+.full-body{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:24px;padding-block:24px 64px;align-items:start}
+.full-side{display:grid;gap:16px;position:sticky;top:120px}
+.full-main{display:grid;gap:20px;min-width:0}
+.pane{background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--r-lg);padding:20px;display:grid;gap:14px}
+.pane h3{margin:0;font:500 1.1rem var(--f-display);color:var(--text-strong);display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pane h3 span{font:500 .72rem var(--f-mono);color:var(--text-muted)}
+.strip-wrap{overflow-x:auto}
+.strip{display:grid;grid-template-columns:64px repeat(14,minmax(38px,1fr));min-width:640px;font-size:.72rem}
+.strip .c{display:grid;place-items:center;padding:6px 2px;min-height:40px;border-top:1px solid var(--border-default)}
+.strip .h{border-top:0;font:500 .62rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);text-align:center;line-height:1.3}
+.strip .h.today{color:var(--text-strong)}
+.strip .wk{background:color-mix(in srgb,var(--surface-alt) 55%,transparent)}
+.strip .c.od{background:var(--error-bg)}.strip .h.od{color:var(--error)}
+.full-top .eyebrow{flex-wrap:wrap}.full-top .pill-m{display:none;margin-top:8px}
+.grp{display:grid;gap:0}
+.grp-h{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0 8px;border-bottom:1px solid var(--border-default)}
+.grp-h h4{margin:0;font:500 .98rem var(--f-display);color:var(--text-strong)}
+.grp-h span{font:500 .72rem var(--f-mono);color:var(--text-muted)}
+.grp.unscheduled .grp-h h4{color:var(--warning)}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border-default)}
+.row2 .t{color:var(--text-strong);font-weight:500;line-height:1.4}
+.row2 .t a{color:inherit}.row2 .t a:hover{color:var(--text-link)}
+.row2 .m{grid-column:1}
+.row2 .ctls{grid-row:1/span 2;grid-column:2;display:grid;gap:6px;justify-items:end}
+.row2 select.st{font:500 .78rem var(--f-body);background:var(--surface-page);color:var(--text-strong);border:1px solid var(--border-default);border-radius:var(--r-sm);padding:6px 8px;cursor:pointer;min-width:130px}
+.row2.od .m .mono{color:var(--error)}
+.row2 select.own{font:500 .78rem var(--f-body);background:var(--surface-page);color:var(--text-strong);border:1px solid var(--border-default);border-radius:var(--r-sm);padding:6px 8px;cursor:pointer;min-width:130px;max-width:180px}
+.row2 select.own:hover,.row2 select.st:hover{border-color:var(--lb-core)}
+.newown{display:flex;gap:6px;align-items:center}
+.newown input{width:140px;padding:5px 8px;font-size:.78rem}
+.newown button{font:500 .74rem var(--f-body);padding:5px 10px}
+.who{display:inline-flex;align-items:center;gap:5px;color:var(--oc,inherit);font-weight:600}
+.who i{width:6px;height:6px;border-radius:50%;background:var(--oc,currentColor)}
+.who.ext{color:var(--warning)}
+.lin-note{font-size:.76rem;color:var(--text-muted)}
+.lin-note.bad{color:var(--error)}
+.full .q{padding:16px;grid-template-columns:1fr}
+.full .q::before{display:none}
+@media (max-width:980px){.full-body{grid-template-columns:1fr}.full-side{position:static}}
+@media (max-width:720px){.ph{grid-template-columns:44px 1fr auto}.ph .xbtn{grid-row:1;grid-column:3}.full-top .hdr{grid-template-columns:44px minmax(0,1fr) auto}.full-top .acts .pill{display:none}.full-top .pill-m{display:inline-flex}.full-top .mg{width:44px;height:44px}.row2{grid-template-columns:1fr}.row2 .ctls{grid-row:auto;grid-column:1;justify-items:start;grid-auto-flow:column}}
+
+@media (max-width:1180px){.board{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:980px){.brief,.idea{grid-template-columns:1fr}}
+@media (max-width:720px){.board,.two{grid-template-columns:1fr}.kpi b{font-size:2rem}.stamp{margin-left:0;width:100%}.facts{grid-template-columns:repeat(3,minmax(0,1fr))}.q,.answered{grid-template-columns:1fr;gap:8px}.ph{grid-template-columns:44px 1fr}.ph .pill{grid-column:2;justify-self:start}}
+@media (prefers-reduced-motion:no-preference){main .sec{animation:fade-up .8s var(--ease) both}@keyframes fade-up{from{transform:translateY(12px)}to{transform:none}}}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
+
+/* Due map row hide/show */
+.dm .rl{position:sticky;padding-left:34px}
+.dmx{position:absolute;left:6px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:6px;border:1px solid var(--border-default);background:var(--surface-page);color:var(--text-muted);display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .12s}
+.dmx svg{width:14px;height:14px}
+.dm .rhov .dmx,.dmx:focus-visible{opacity:1}
+.dmx:hover{color:var(--text-link);border-color:var(--lb-core)}
+.dm .c.rhov:not(.rl){background-color:color-mix(in srgb,var(--surface-tinted) 55%,transparent)}
+.oth{display:grid;gap:4px;padding-block:4px}
+.oth b{font-weight:500;color:var(--text-strong)}
+.oth-l{display:flex;flex-wrap:wrap;gap:4px}
+.ochip{font:500 .66rem var(--f-body);border:1px solid var(--border-default);background:var(--surface-page);color:var(--text-muted);border-radius:var(--r-full);padding:1px 7px;cursor:pointer;white-space:nowrap}
+.ochip:hover{color:var(--text-link);border-color:var(--lb-core)}
+@media (hover:none){.dmx{opacity:.7}}
+
+/* Key events */
+.lcol{display:grid;gap:14px;min-width:0}
+.evs{display:grid;gap:8px}
+.ev-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (min-width:1200px){.ev-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (max-width:980px) and (min-width:561px){.ev-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:560px){.ev-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ev{position:relative;display:flex;flex-direction:column;justify-content:flex-start;gap:4px;min-width:0;background:rgba(247,246,242,.05);border:1px solid var(--dust);border-radius:var(--r-lg);padding:12px 14px;color:var(--chalk);text-decoration:none;transition:border-color .15s,background .15s}
+.ev:hover{border-color:var(--chalk);background:rgba(247,246,242,.09);text-decoration:none}
+.ev-w{font:500 .64rem var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:rgba(247,246,242,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-w.soon{color:#22D37A}
+.ev-t{font-size:.88rem;font-weight:500;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ev-p{align-self:flex-start;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:500 .64rem var(--f-body);color:var(--lb-ghost);border:1px solid var(--border-tinted);border-radius:var(--r-full);padding:1px 8px}
+.ev-d{position:absolute;left:0;top:calc(100% + 6px);z-index:40;width:min(320px,80vw);background:var(--chalk);color:var(--ink);border-radius:var(--r-md);padding:12px 14px;font-size:.8rem;line-height:1.45;white-space:pre-line;box-shadow:0 14px 32px rgba(0,0,0,.35);opacity:0;visibility:hidden;transition:opacity .12s,visibility .12s;pointer-events:none}
+.ev-d em{color:var(--ash);font-style:normal}
+.ev:hover .ev-d,.ev:focus-visible .ev-d{opacity:1;visibility:visible}
+.ev-empty{margin:0;font-size:.84rem;color:rgba(247,246,242,.6);border:1px dashed var(--dust);border-radius:var(--r-lg);padding:14px 16px}
+.ev-empty b{color:var(--chalk);font-weight:500}
+.ev-grid .ev-empty{grid-column:1/-1}
+@media (hover:none){.ev-d{display:none}}
+
+/* Event hide + live */
+.ev-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ev-unhide{background:none;border:0;color:var(--lb-ghost);font:600 .74rem var(--f-body);cursor:pointer;padding:0}
+.ev-c{position:relative;display:flex;min-width:0}
+.ev-c .ev{flex:1;padding-right:34px}
+.ev.ev-live{border-color:#4B52FF;background:rgba(75,82,255,.22);box-shadow:inset 3px 0 0 #4B52FF}
+.ev.ev-live .ev-w{color:#AEB2FF}
+.ev-x{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:6px;border:1px solid rgba(247,246,242,.25);background:var(--forest);color:var(--chalk);display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .12s;z-index:2}
+.ev-x svg{width:12px;height:12px}
+.ev-c:hover .ev-x,.ev-x:focus-visible{opacity:1}
+.ev-x:hover{border-color:var(--chalk)}
+@media (hover:none){.ev-x{opacity:.7}}
+
+/* Priority bar */
+.pr-u{background:#FF5A5F}.pr-h{background:var(--maize)}.pr-m{background:var(--lb-mist)}.pr-l{background:rgba(198,232,212,.55)}
+.pr-n{background:repeating-linear-gradient(135deg,rgba(247,246,242,.35) 0 3px,rgba(247,246,242,.1) 3px 6px)}
+.pri-open{display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:0;color:var(--lb-ghost);font:600 .78rem var(--f-body);cursor:pointer}
+.pri-open:hover{color:#fff}
+.pri-open i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.pri-list{display:grid;gap:4px;max-height:320px;overflow-y:auto;padding-right:2px}
+.pri-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 8px;border-radius:var(--r-md);background:rgba(247,246,242,.04)}
+.pri-t{color:var(--chalk);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}
+.pri-t span{font:500 .68rem var(--f-mono);color:rgba(247,246,242,.55)}
+.pri-t:hover{color:var(--lb-ghost);text-decoration:none}
+.pri-b{display:flex;gap:3px}
+.pb{width:26px;height:26px;border-radius:6px;border:1px solid rgba(247,246,242,.2);background:transparent;color:var(--chalk);font:600 .7rem var(--f-mono);cursor:pointer}
+.pb:hover{border-color:var(--chalk)}.pb:disabled{opacity:.4;cursor:default}
+.pb.u:hover{background:#FF5A5F;color:#fff}.pb.h:hover{background:var(--maize);color:var(--void)}.pb.m:hover{background:var(--lb-mist);color:#fff}.pb.l:hover{background:var(--sage);color:var(--void)}
+.pri-more{justify-self:start;background:none;border:0;color:var(--lb-ghost);font:600 .76rem var(--f-body);cursor:pointer;padding:4px 0}
+
+/* Issue digest on hover */
+.top{position:relative;z-index:250}
+.jt-wrap{position:relative}
+.jt a{color:inherit;text-decoration:none}.jt a:hover{color:var(--lb-ghost);text-decoration:none}
+.jt{outline:none}
+.digest{position:absolute;left:0;top:calc(100% + 10px);z-index:30;width:min(560px,100%);background:var(--chalk);color:var(--ink);border-radius:var(--r-lg);padding:16px 18px;box-shadow:0 18px 40px rgba(0,0,0,.35);display:grid;gap:6px;font-size:.86rem;line-height:1.5;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .15s,transform .15s,visibility .15s;pointer-events:none}
+.jt-wrap:hover .digest,.jt:focus-visible+.digest,.jt:focus+.digest{opacity:1;visibility:visible;transform:none}
+.digest h4{margin:6px 0 0;font:500 .66rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ash)}
+.digest h4:first-child{margin-top:0}
+.digest p{margin:0}.digest .dmuted{color:var(--ash)}
+@media (hover:none){.digest{display:none}}
+
+/* Collapsible sections */
+.sec.fold>.sec-h{cursor:pointer;user-select:none;border-radius:var(--r-md)}
+.sec.fold>.sec-h h2::after{content:"";display:inline-block;width:9px;height:9px;margin-left:12px;border-right:2px solid var(--text-muted);border-bottom:2px solid var(--text-muted);transform:translateY(-4px) rotate(45deg);transition:transform .2s}
+.sec.fold.closed>.sec-h h2::after{transform:translateY(-1px) rotate(-45deg)}
+.sec.fold>.sec-h:hover h2{color:var(--text-link)}
+.sec.fold.closed>:not(.sec-h){display:none!important}
+.sec.fold.closed>.sec-h{padding-bottom:4px;border-bottom:1px solid var(--border-default)}
+
+/* Simple project cards */
+.grid .card.hc-late,.grid .card.hc-blocked{border-color:var(--error);box-shadow:0 0 0 1px var(--error)}
+.grid .card{padding:18px;gap:12px}
+.grid .card .ph{grid-template-columns:40px minmax(0,1fr) auto;gap:12px}
+.grid .card .mg{width:40px;height:40px;font-size:1.05rem}
+.grid .card .ph h3{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph-a{display:flex;gap:6px;align-items:center;flex-wrap:nowrap}
+.grid .card .ph-a .xbtn{grid-row:auto;grid-column:auto;width:32px;height:32px}
+.grid .card .ph-a .pill{grid-column:auto}
+.sum1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.86rem;color:var(--text-muted)}
+.grid .card .stack{height:6px}
+.grid .card .iss{border-top:0;padding-top:0}
+.grid .card .iss summary{justify-content:flex-start}
+.grid .card .iss summary::after{margin-left:auto}
+.grid .card .iss ul{max-height:300px}
+.grid .card .links{gap:6px;padding-top:12px}
+.grid .card .links a::after{content:none}
+.lk{font:500 .74rem var(--f-body);padding:4px 10px;border:1px solid var(--border-default);border-radius:var(--r-full);color:var(--text-default);background:var(--surface-page);white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis}
+.lk:hover{border-color:var(--lb-core);color:var(--text-link);text-decoration:none}
+@media (max-width:520px){.grid .card .ph-a .pill{font-size:0;padding:5px;gap:0}}
+
+/* Kanban cards (simplified) */
+.board .kc{position:relative;gap:6px;padding:12px 14px;transition:border-color .15s}
+.board .kc:hover{border-color:var(--text-muted)}
+.kt{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:24px}
+.kref{font:500 .7rem var(--f-mono);letter-spacing:.04em;color:var(--text-muted)}
+.kown{position:relative;display:inline-flex;align-items:center;gap:5px;border-radius:var(--r-full);background:color-mix(in srgb,var(--oc) 88%,#000);color:#fff;font:600 .72rem var(--f-body);padding:2px 4px 2px 8px}
+.kown select option{color:#1a1a1a;background:#fff}
+.kown.ro{padding-right:9px}
+.kown i{width:6px;height:6px;border-radius:50%;background:#fff;flex:none}
+.kown select{appearance:none;-webkit-appearance:none;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 4l3 3 3-3' fill='none' stroke='%23ffffff' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 2px center;border:0;color:inherit;font:inherit;padding:0 14px 0 0;margin:0;cursor:pointer;max-width:110px}
+.kown select:focus{outline:none}
+.board .kc .t{font-size:.9rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.kb{position:relative;display:flex;align-items:center;gap:8px;min-height:26px;font-size:.74rem;color:var(--text-muted);white-space:nowrap}
+.kdate{white-space:nowrap}
+.kc.od .kdate{color:var(--error)}
+.board .kc .t:hover{text-decoration:none}
+.kacts{position:absolute;right:0;top:50%;transform:translateY(-50%);display:flex;gap:10px;align-items:center;opacity:0;transition:opacity .12s;background:var(--surface-card);padding-left:10px}
+.kc:hover .kacts,.kc:focus-within .kacts{opacity:1}
+.kacts a{font:600 .74rem var(--f-body);color:var(--text-muted);text-decoration:none}
+.kacts a:hover{color:var(--text-link);text-decoration:none}
+.board .kacts select{margin:0;font-size:.72rem;padding:2px 4px;max-width:86px}
+.ktip{position:absolute;left:10px;right:10px;top:calc(100% - 6px);z-index:30;background:var(--lb-ice);color:var(--ink);border-radius:var(--r-md);padding:10px 12px;font-size:.8rem;line-height:1.45;box-shadow:0 12px 28px rgba(0,0,0,.18);opacity:0;visibility:hidden;transition:opacity .12s .25s,visibility .12s .25s;pointer-events:none;display:grid;gap:4px;max-height:220px;overflow:hidden}
+.ktip h4{margin:0;font:500 .6rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ash)}
+.ktip p{margin:0}.ktip .dmuted{color:var(--ash)}
+.kc .t:hover~.ktip,.kc:hover .ktip{opacity:1;visibility:visible}
+.kc:has(.kacts:hover) .ktip,.kc:has(.kown:hover) .ktip{opacity:0;visibility:hidden}
+@media (hover:none){.kacts{opacity:1}.ktip{display:none}}
+
+/* Plan controls + week view */
+.pctl{display:flex;gap:12px 16px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--border-default);border-radius:var(--r-md);overflow:hidden}
+.seg button{font:500 .8rem var(--f-body);padding:6px 12px;border:0;background:var(--surface-card);color:var(--text-default);cursor:pointer}
+.seg button+button{border-left:1px solid var(--border-default)}
+.seg button[aria-pressed="true"]{background:var(--lb-core);color:#fff}
+.stt{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.stt-l{font:500 .64rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-right:2px}
+.tg{font:500 .76rem var(--f-body);padding:4px 10px;border-radius:var(--r-full);border:1px solid var(--border-default);background:var(--surface-card);color:var(--text-default);cursor:pointer}
+.tg .mono{color:var(--text-muted);font-size:.7rem}
+.tg.on{background:var(--surface-tinted);border-color:var(--lb-core);color:var(--text-on-tinted)}
+.tg.clr{border-style:dashed;color:var(--text-muted)}
+.wk-tools{display:flex;gap:12px;margin-left:auto}
+.wk-tools button{background:none;border:0;font:600 .76rem var(--f-body);color:var(--text-link);cursor:pointer;padding:0}
+.board.weeks{display:grid;grid-template-columns:1fr;gap:10px}
+.wgrp{background:var(--surface-alt);border-radius:var(--r-lg);padding:0 12px}
+.wgrp summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;padding:12px 4px}
+.wgrp summary::-webkit-details-marker{display:none}
+.wgrp summary::before{content:"";width:8px;height:8px;border-right:2px solid var(--text-muted);border-bottom:2px solid var(--text-muted);transform:rotate(-45deg);transition:transform .2s;align-self:center}
+.wgrp[open] summary::before{transform:rotate(45deg)}
+.wgrp summary h3{margin:0;font:500 1rem var(--f-display);color:var(--text-strong)}
+.wgrp summary span{font:500 .72rem var(--f-mono);color:var(--text-muted)}
+.wgrp.overdue summary h3{color:var(--error)}.wgrp.nodate summary h3{color:var(--warning)}
+.wcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:8px;padding-bottom:12px;align-items:start}
+@media (max-width:720px){.wk-tools{margin-left:0}}
+
+/* Week x status grid + drag and drop */
+.wcols{display:grid;gap:8px;padding-bottom:12px;overflow-x:auto;align-items:start}
+.wcol{background:color-mix(in srgb,var(--surface-page) 60%,transparent);border-radius:var(--r-md);padding:8px;display:grid;gap:8px;min-height:64px;align-content:start;transition:background .12s,box-shadow .12s}
+.wcol-h{display:flex;justify-content:space-between;align-items:center;padding:0 2px}
+.wcol-h .mono{font-size:.7rem;color:var(--text-muted)}
+.dz.over{box-shadow:inset 0 0 0 2px var(--lb-core);background:var(--surface-tinted)}
+.board .kc[draggable="true"]{cursor:grab}
+.board .kc.dragging{opacity:.45;cursor:grabbing}
+
+/* Project issue rows */
+.iss .pi-c .kst select.st{appearance:none;-webkit-appearance:none;border:0;border-radius:0;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 4l3 3 3-3' fill='none' stroke='%23ffffff' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 2px center;color:inherit;font:inherit;padding:0 14px 0 0;margin:0;max-width:120px;min-width:0;cursor:pointer}
+.iss .pi-c .kst select.st:focus{outline:none}
+.iss .pi-c .kst:focus-within{box-shadow:0 0 0 2px var(--lb-core)}
+.pi-c .kown:not(.kst){opacity:0;transition:opacity .12s}
+.pi:hover .pi-c .kown:not(.kst),.pi:focus-within .pi-c .kown:not(.kst){opacity:1}
+@media (hover:none){.pi-c .kown:not(.kst){opacity:1}}
+.iss li.pi{grid-template-columns:minmax(0,1fr) auto;align-items:start}
+.pi .it-t a{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pi-c{grid-row:1/span 2;grid-column:2;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.iss .pi-c select.st{grid-row:auto;grid-column:auto}
+.pi .it-m{position:relative;min-height:20px}
+.pi .it-t a:hover{text-decoration:none;color:var(--text-link)}
+.pi .it-m .mono{white-space:nowrap}
+.pi-a{margin-left:auto;display:flex;gap:10px;opacity:0;transition:opacity .12s}
+.pi:hover .pi-a,.pi:focus-within .pi-a{opacity:1}
+.pi-a a{font:600 .74rem var(--f-body);color:var(--text-muted);text-decoration:none}
+.pi-a a:hover{color:var(--text-link);text-decoration:none}
+.ftip{position:fixed;z-index:600;background:var(--lb-ice);color:var(--ink);border-radius:var(--r-md);padding:10px 12px;font-size:.8rem;line-height:1.45;box-shadow:0 12px 28px rgba(0,0,0,.2);display:grid;gap:4px;max-height:240px;overflow:hidden;pointer-events:none}
+.ftip[hidden]{display:none}
+.ftip .ft-k{font:600 .7rem var(--f-mono);color:var(--lb-deep)}
+.ftip h4{margin:0;font:500 .6rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ash)}
+.ftip p{margin:0}.ftip .dmuted{color:var(--ash)}
+@media (hover:none){.pi-a{opacity:1}.ftip{display:none!important}}
+
+/* Daily Brew contact filter */
+.bwho{display:inline-flex;gap:6px;align-items:center;margin-left:auto;flex-wrap:wrap}
+.bwho .bxs{max-width:200px;padding:6px 8px;font-size:.8rem}
+.bq{font:inherit;font-size:.8rem;padding:6px 10px;border:1px solid var(--border-default);border-radius:var(--r-full);background:var(--surface-page);color:var(--text-strong);width:180px}
+.bq:focus{outline:none;border-color:var(--lb-core)}
+@media (max-width:720px){.bwho{margin-left:0;width:100%}.bwho .bxs{flex:1;max-width:none}.bq{flex:1;width:auto}}
+
+/* Ask popover */
+.askpop{position:fixed;z-index:700;background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--r-lg);box-shadow:0 18px 44px rgba(0,0,0,.25);padding:14px;display:grid;gap:10px}
+.askpop[hidden]{display:none}
+.tab[hidden]{display:none}
+.ap-h{font:500 .66rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+.askpop textarea{font:inherit;font-size:.86rem;width:100%;resize:vertical;background:var(--surface-page);color:var(--text-strong);border:1px solid var(--border-default);border-radius:var(--r-md);padding:10px}
+.askpop textarea:focus{outline:none;border-color:var(--lb-core)}
+.ap-a{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ap-m{font-size:.76rem;color:var(--text-muted)}
+
+/* Last WhatsApp message */
+.lm{display:flex;gap:8px;align-items:baseline;font-size:.76rem;color:var(--text-muted);background:var(--surface-alt);border-radius:var(--r-md);padding:5px 9px;text-decoration:none;min-width:0;max-width:100%}
+a.lm:hover{color:var(--text-strong);text-decoration:none;box-shadow:inset 0 0 0 1px var(--lb-core)}
+.lm-k{font:500 .6rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.lm .mono{white-space:nowrap}
+.lm-t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-default)}
+.lm-go{white-space:nowrap;font-weight:600;color:var(--text-link)}.lm-go.muted{color:var(--text-muted);font-weight:400}
+
+/* WhatsApp context modal */
+button.lm{border:0;font:inherit;font-size:.76rem;text-align:left;cursor:pointer;width:100%}
+button.lm:hover{color:var(--text-strong);box-shadow:inset 0 0 0 1px var(--lb-core)}
+.wam{position:fixed;inset:0;z-index:650;display:grid;place-items:center;padding:16px}
+.wam[hidden]{display:none}
+.wam-bg{position:absolute;inset:0;background:rgba(10,11,26,.55)}
+.wam-box{position:relative;width:min(640px,100%);max-height:min(80vh,760px);display:grid;grid-template-rows:auto 1fr;background:var(--surface-card);border-radius:var(--r-xl);box-shadow:0 24px 60px rgba(0,0,0,.35);overflow:hidden}
+.wam-h{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:16px 18px;border-bottom:1px solid var(--border-default)}
+.wam-h h3{margin:2px 0 0;font:500 1.15rem var(--f-display);color:var(--text-strong)}
+.wam-a{display:flex;gap:8px;align-items:center}
+.wam-l{overflow-y:auto;padding:14px 18px;display:grid;gap:8px;align-content:start;background:var(--surface-page)}
+.wam-day{justify-self:center;font:500 .64rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);background:var(--surface-alt);border-radius:var(--r-full);padding:3px 10px;margin:6px 0}
+.wam-m{max-width:85%;justify-self:start;background:var(--surface-card);border:1px solid var(--border-default);border-radius:12px 12px 12px 4px;padding:8px 10px;display:grid;gap:3px}
+.wam-m.me{justify-self:end;background:var(--surface-tinted);border-color:var(--border-tinted);border-radius:12px 12px 4px 12px}
+.wam-w{display:flex;gap:8px;align-items:baseline;font-size:.74rem}
+.wam-w .mono{color:var(--text-muted);font-size:.68rem}
+.wam-x{font-size:.86rem;line-height:1.45;color:var(--text-strong);white-space:pre-wrap;word-break:break-word}
+
+/* Daily Brew related links */
+.lmrow{display:flex;gap:8px;align-items:center;margin-top:4px;min-width:0}
+.lmrow .lm{flex:1;min-width:0}
+.blinks{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto;justify-content:flex-end;flex:none}
+@media (max-width:560px){.lmrow{flex-wrap:wrap}.lmrow .lm{flex-basis:100%}}
+.blinks .lk{font:500 .72rem var(--f-body);padding:3px 9px;cursor:pointer}
+button.lk{border:1px solid var(--border-default);border-radius:var(--r-full);background:var(--surface-page);color:var(--text-default)}
+.lk.wa{border-color:#25D36655;color:#128C4A}.lk.gm{border-color:#EA433555;color:#C5221F}.lk.ca{border-color:#4285F455;color:#1A62D6}.lk.li{border-color:var(--border-tinted);color:var(--text-on-tinted)}
+#brew .br.dn,#brew .br.cx{opacity:.6}
+#brew .br.dn .s{text-decoration:line-through}
+#brew .br.cx .s{text-decoration:line-through;color:var(--text-muted)}
+#bfilter .tg{align-self:center}
+
+/* Daily Brew actions */
+.br{position:relative}
+.bx{display:none;gap:4px;align-items:center;flex-wrap:wrap;position:absolute;right:10px;top:8px;z-index:5;background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--r-md);padding:4px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-width:calc(100% - 90px)}
+.br:hover .bx,.br:focus-within .bx{display:flex}
+.bxb{font:500 .74rem var(--f-body);padding:5px 9px;border-radius:6px;border:1px solid var(--border-default);background:var(--surface-page);color:var(--text-strong);cursor:pointer;white-space:nowrap;text-decoration:none}
+.bxb:hover{border-color:var(--lb-core);text-decoration:none}
+.bxb.go,.bxb.pri{background:var(--lb-core);border-color:var(--lb-core);color:#fff}
+.bxb.on{background:var(--surface-tinted);border-color:var(--lb-core);color:var(--text-on-tinted)}
+.bxb.ok{background:var(--success-bg);border-color:var(--success);color:var(--success);font-weight:600}.bxb.ok:hover{background:var(--success);color:#fff}.bxb.no:hover{background:var(--error-bg);color:var(--error)}
+.bxb:disabled,.bxs:disabled{opacity:.5;cursor:default}
+.bxs{font:500 .74rem var(--f-body);padding:5px 6px;border-radius:6px;border:1px solid var(--border-default);background:var(--surface-page);color:var(--text-strong);max-width:140px;cursor:pointer}
+.bx-more{display:none;position:absolute;right:8px;top:8px;width:32px;height:32px;border-radius:8px;border:1px solid var(--border-default);background:var(--surface-page);color:var(--text-strong);font:600 1rem/1 var(--f-body);cursor:pointer}
+@media (hover:none),(max-width:720px){
+  .bx-more{display:block}
+  .br{padding-right:48px}
+  .br:hover .bx,.br:focus-within .bx{display:none}
+  .br.bx-open .bx{display:flex;position:static;grid-column:1/-1;max-width:none;box-shadow:none;background:var(--surface-alt);margin-right:-36px}
+  .bxb,.bxs{padding:8px 10px;font-size:.8rem}
+}
+
+/* Daily Brew */
+.brew{display:grid;gap:8px}
+.br{display:grid;grid-template-columns:64px minmax(0,1fr);gap:14px;background:var(--surface-card);border:1px solid var(--border-default);border-left:4px solid var(--stone);border-radius:var(--r-lg);padding:14px 16px}
+.br.p1{border-left-color:var(--error)}.br.p2{border-left-color:var(--warning)}
+.sc{display:grid;justify-items:center;align-content:start;line-height:1}
+.sc b{font:500 1.6rem/1 var(--f-display);color:var(--text-strong)}.br.p1 .sc b{color:var(--error)}.br.p2 .sc b{color:var(--warning)}
+.sc small{font:500 .56rem var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-top:4px}
+.bt{display:grid;gap:4px;min-width:0;font-size:.88rem}
+#brew-state.err{color:var(--error)}
+/* Calm header: one thing to jump into + your week */
+.now{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;padding-block:8px 28px;align-items:start}
+.jump{position:relative;background:var(--forest);border:1px solid var(--dust);border-radius:var(--r-xl);padding:clamp(22px,3vw,36px);display:grid;gap:14px;align-content:center}
+.jump.urgent{border-color:rgba(255,138,138,.45);box-shadow:inset 4px 0 0 #FF5A5F}
+.jtag{display:inline-flex;align-items:center;gap:10px;font:500 .7rem var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--sage)}
+.jump.urgent .jtag{color:#FFB4B4}
+.pdot{width:9px;height:9px;border-radius:50%;background:#FF5A5F;animation:pls 1.8s infinite}
+@keyframes pls{0%{box-shadow:0 0 0 0 rgba(255,90,95,.6)}70%{box-shadow:0 0 0 10px rgba(255,90,95,0)}100%{box-shadow:0 0 0 0 rgba(255,90,95,0)}}
+.jump h1{font:400 clamp(1.15rem,1.85vw,1.7rem)/1.25 var(--f-display);letter-spacing:-.015em;margin:0;color:var(--chalk);text-wrap:balance;max-width:52ch;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.jmeta{font:400 .74rem var(--f-mono);color:rgba(247,246,242,.55)}
+.acts-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.act{font:600 .9rem var(--f-body);border-radius:var(--r-md);padding:11px 18px;cursor:pointer;border:1px solid rgba(247,246,242,.28);background:transparent;color:var(--chalk);transition:background .15s,border-color .15s;text-decoration:none}
+.act:hover{background:rgba(247,246,242,.12);border-color:var(--chalk);text-decoration:none}
+.act.go{background:var(--lb-core);border-color:var(--lb-core);color:#fff}.act.go:hover{background:var(--lb-glow)}
+.act.ghost{border-color:transparent;color:rgba(247,246,242,.7)}
+.week{background:rgba(247,246,242,.04);border:1px solid var(--dust);border-radius:var(--r-xl);padding:20px 22px;display:grid;gap:12px;align-content:start}
+.wk-h{font:500 .66rem var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:rgba(247,246,242,.55)}
+.wk-h.sm{margin-top:6px}
+.wk-prog{display:grid;gap:8px}
+.wk-n{display:flex;align-items:baseline;gap:10px}
+.wk-n b{font:500 2.4rem/1 var(--f-display);letter-spacing:-.03em;color:#22D37A}
+.wk-n span{font-size:.9rem;color:rgba(247,246,242,.8)}
+.wk-bar{height:10px;border-radius:var(--r-full);background:rgba(247,246,242,.1);overflow:hidden}
+.wk-bar{display:flex;gap:2px}
+.wk-bar i{display:block;height:100%}
+.wk-bar i:first-child{border-radius:var(--r-full) 0 0 var(--r-full)}.wk-bar i:last-child{border-radius:0 var(--r-full) var(--r-full) 0}
+.wk-bar .d,.wk-leg .d{background:#22D37A}.wk-bar .p,.wk-leg .p{background:#4B52FF}.wk-bar .t,.wk-leg .t{background:rgba(247,246,242,.22)}
+.wk-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:rgba(247,246,242,.75)}
+.wk-leg span{display:inline-flex;align-items:center;gap:6px}.wk-leg i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.wk-s{font-size:.78rem;color:rgba(247,246,242,.55)}
+.orgs{display:grid;gap:6px}
+.org{display:grid;grid-template-columns:44px 1fr auto;align-items:baseline;gap:10px;text-align:left;background:transparent;border:1px solid var(--dust);border-radius:var(--r-md);padding:10px 12px;color:var(--chalk);cursor:pointer;font:inherit;transition:border-color .15s,background .15s}
+.org:hover{border-color:var(--chalk);background:rgba(247,246,242,.06)}
+.org b{font:500 1.2rem/1 var(--f-display)}
+.org span{font-size:.86rem;color:rgba(247,246,242,.75)}
+.org em{font-style:normal;font:600 .8rem var(--f-body);color:var(--lb-ghost)}
+.col.flash{box-shadow:0 0 0 3px var(--lb-core)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:500;background:var(--void);color:var(--chalk);border:1px solid var(--dust);border-radius:var(--r-lg);padding:12px 16px;display:flex;gap:14px;align-items:center;font-size:.88rem;box-shadow:0 12px 32px rgba(0,0,0,.3);max-width:calc(100vw - 32px)}
+.toast button{background:none;border:0;color:var(--lb-ghost);font:600 .88rem var(--f-body);cursor:pointer}
+@media (max-width:980px){.now{grid-template-columns:1fr}}
+@media (max-width:560px){.act{flex:1 1 auto;text-align:center}}
+@media (prefers-reduced-motion:reduce){.pdot{animation:none}}
+</style>
+
+<header class="top">
+  <div class="in bar">
+    <div class="logo" title="Project Radar"><i id="bmark">R</i><b id="bname"></b> <span>Project Radar</span></div>
+    <div class="stamp"><span><span class="live off" id="live"></span><span id="stamp">Connecting</span></span><span class="rstate" id="rstate"></span><button type="button" class="rbtn" id="rall" aria-label="Refresh all projects now" title="Run the radar again for all projects"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg></button></div>
+  </div>
+  <div class="in now">
+    <div class="lcol"><section class="jump" id="jump" aria-live="polite"></section>
+    <section class="evs" aria-label="Key events"><div class="ev-head"><div class="wk-h">Key events · next 7 days</div><span id="ev-hd"></span></div><div class="ev-grid" id="evs"></div></section></div>
+    <section class="week" id="week" aria-label="Your week"></section>
+  </div>
+</header>
+
+<nav class="sub" aria-label="Sections">
+  <div class="in tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="today" aria-selected="true">Today<span class="n" id="n-plan"></span></button>
+    <button class="tab" role="tab" data-tab="projects" aria-selected="false">Projects<span class="n" id="n-projects"></span></button>
+    <button class="tab" role="tab" data-tab="brew" aria-selected="false">Daily Brew<span class="n" id="n-brew"></span></button>
+  </div>
+</nav>
+
+<main class="in">
+  <div class="toast" id="toast" role="status" hidden></div>
+  <div class="full" id="full" role="dialog" aria-modal="true" aria-labelledby="full-title" hidden></div>
+  <div class="notice" id="nodb" hidden>Live data is not available in this view. Open the radar on claude.ai while signed in.</div>
+
+  <div class="panel" id="p-today" style="display:grid;gap:28px">
+    <section class="sec fold" id="s-due">
+      <div class="sec-h"><div><div class="eyebrow">Next 14 days</div><h2>Due map</h2></div><span class="hint">Open items by due date. Red column is past due.</span></div>
+      <div class="dm-wrap"><div class="dm" id="dm"></div></div>
+    </section>
+    <section class="sec fold" id="s-plan" data-default="closed">
+      <div class="sec-h"><div><div class="eyebrow">Triage</div><h2>Plan</h2></div><span class="hint">Move an item and the next brief updates Linear or GitHub.</span></div>
+      <div class="filter" id="pfilter"></div>
+      <div class="pctl" id="pctl"></div>
+      <div class="board" id="board"></div>
+    </section>
+  </div>
+
+  <section class="panel sec fold" id="p-projects" hidden>
+    <div class="sec-h"><div><div class="eyebrow">Portfolio</div><h2>Projects</h2></div><span class="hint" id="p-hint"></span></div>
+    <div class="grid" id="projects"></div>
+  </section>
+
+  <section class="panel sec fold" id="p-brew" hidden>
+    <div class="sec-h"><div><div class="eyebrow">Daily Brew · live from Supabase</div><h2>Priorities</h2></div><span class="hint"><span id="brew-state">Not loaded</span> <button type="button" class="btn" id="brew-reload">Reload</button></span></div>
+    <div class="filter" id="bfilter"></div>
+    <div class="brew" id="brew"></div>
+  </section>
+</main>
+
+<script>
+const BUCKETS=[["today","Today"],["this_week","This week"],["next_iteration","Next iteration"],["someday","Someday"],["unscheduled","Needs a date"]];
+const BL=Object.fromEntries(BUCKETS);
+const S={meta:null,projects:[],items:[],questions:[],inbox:[],filter:"all",fp:new Set(),fu:new Set(),openCards:new Set(),closedCards:new Set(),pending:{}};
+let db=null,mcp=null;
+const RADAR_VERSION="1.0.0";
+/* Instance config. Lives in the db doc config/app, written by the radar-setup skill. Nothing user specific is hard-coded below. */
+const CFG={brand:"",mark:"",brief_trigger:"",linear_team:"",linear_workspace:"",calendars:["primary"],people:[],stopwords:[],
+  brew:{enabled:false,supabase_project:"",label:"Daily Brew"},
+  ask_template:"{ref} · {title}\n{url}\n\nRead {ref} in Linear (description and comments) and help me with: ",
+  code_template:"Work on Linear issue {ref}: {title}\n{url}\nRead the issue with the Linear connector first (description and comments), then propose a plan before changing code."};
+const TEAM=()=>CFG.linear_team?{team:CFG.linear_team}:{};
+const linURL=k=>CFG.linear_workspace?`https://linear.app/${CFG.linear_workspace}/issue/${k}`:"";
+const tpl=(t,i)=>String(t||"").replace(/\{(\w+)\}/g,(m,k)=>i[k]??"");
+let USERC=[];
+function applyCfg(c){
+  if(c)Object.keys(c).forEach(k=>{CFG[k]=(k==="brew"&&c.brew)?Object.assign({},CFG.brew,c.brew):c[k]});
+  USERC=(CFG.people||[]).filter(p=>p.match&&p.color).map(p=>{try{return [new RegExp(p.match,"i"),p.color]}catch(e){return null}}).filter(Boolean);
+  $("bname").textContent=CFG.brand||"";$("bmark").textContent=(CFG.mark||CFG.brand||"R").slice(0,1).toUpperCase();
+  document.title=(CFG.brand?CFG.brand+" ":"")+"Project Radar";document.querySelector(".logo").title="Project Radar v"+RADAR_VERSION;
+  const bt=document.querySelector('.tab[data-tab="brew"]');const on=!!(CFG.brew&&CFG.brew.enabled&&CFG.brew.supabase_project);
+  if(bt){bt.hidden=!on;bt.firstChild.textContent=(CFG.brew&&CFG.brew.label)||"Daily Brew";if(!on&&bt.getAttribute("aria-selected")==="true")document.querySelector('.tab[data-tab="today"]').click()}
+}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const TODAY=iso(new Date());
+const parse=d=>new Date((d||"").length<=10?d+"T12:00:00":d);
+const fmtD=d=>d?parse(d).toLocaleDateString("en-US",{month:"short",day:"numeric"}):"no date";
+const fmtT=d=>new Date(d).toLocaleString("en-US",{weekday:"short",hour:"numeric",minute:"2-digit"});
+const open=i=>i.bucket!=="done";
+const isOD=i=>i.due&&i.due<TODAY&&open(i);
+const proj=slug=>S.projects.find(p=>p.slug===slug);
+const pname=slug=>(proj(slug)||{}).name||(slug==="general"?"General":slug||"General");
+const ext=u=>`href="${esc(u)}" target="_blank" rel="noopener"`;
+
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x===b));
+  document.querySelectorAll(".panel").forEach(p=>p.hidden=p.id!=="p-"+b.dataset.tab);
+  try{localStorage.setItem("radar-tab",b.dataset.tab)}catch(e){}
+}));
+try{const t=((location.hash||"").slice(1).startsWith("proj-")?"projects":(location.hash||"").slice(1))||localStorage.getItem("radar-tab");const b=t&&document.querySelector(`.tab[data-tab="${t}"]`);if(b)b.click()}catch(e){}
+
+const daysLate=i=>i.due?Math.round((parse(TODAY)-parse(i.due))/864e5):0;
+S.hide=new Set();
+const HOTF=["blocker","ci_failed","deploy_failed"];
+function score(i){const f=i.flags||[],h=(S.meta&&S.meta.headline)||"";let s=0;
+  if(i.ref&&new RegExp("\\b"+i.ref.replace(/[^\w-]/g,"")+"\\b").test(h))s+=5000;
+  if(f.includes("deploy_failed")||f.includes("ci_failed"))s+=900;
+  if(f.includes("blocker"))s+=1000;
+  if(/urgent|urgente|incident|incidente|bloque/i.test(i.title||""))s+=600;
+  if(isOD(i))s+=400+Math.min(daysLate(i),60)*4;else if(i.due===TODAY)s+=300;
+  if(i.status==="In Progress")s+=20;return s}
+function hotList(){return S.items.filter(i=>open(i)&&!S.hide.has(i.id)&&!i.bucket_request&&!i.status_request&&(isOD(i)||i.due===TODAY||(i.flags||[]).some(f=>HOTF.includes(f)))).sort((a,b)=>score(b)-score(a))}
+function lateLabel(i){if(isOD(i)){const d=daysLate(i);return {n:d+"d",w:"late"}}if(i.due===TODAY)return {n:"Today",w:"due"};return {n:"!",w:(i.flags||[])[0]?.replace(/_/g," ")||"hot"}}
+const CLAUDE_PROJECT="01a0d985-cf64-71e5-8136-33eae761405a";
+const DIG={};
+function repoOf(i){const g=i.github||{};const u=g.pr_url||g.issue_url||"";let m=u.match(/github\.com\/([^/]+\/[^/]+)/);if(m)return m[1];
+  const p=proj(i.project);const r=p&&(p.repos||[])[0];if(r){m=String(r.url||"").match(/github\.com\/([^/]+\/[^/?#]+)/);if(m)return m[1];if(String(r.name||"").includes("/"))return r.name}return ""}
+function codeURL(i){const d=DIG[i.ref]||{};const repo=repoOf(i);
+  const p=tpl(CFG.code_template,{ref:i.ref||"",title:i.title||"",url:i.url||""})+(d.branch?`\nUse branch ${d.branch}.`:"");
+  const q=new URLSearchParams({prompt:p});if(repo)q.set("repositories",repo);return "https://claude.ai/code?"+q.toString()}
+function askURL(i){const q=new URLSearchParams({q:tpl(CFG.ask_template,{ref:i.ref||"this issue",title:i.title||"",url:i.url||""})});return "https://claude.ai/new?"+q.toString()}
+function digestOf(md){let t=String(md||"");t=t.split(/\n>>>\s*Agent notes|\n\+\+\+\s*Agent notes/i)[0];
+  t=t.replace(/<(?:issue|user|project)[^>]*label="([^"]*)"[^>]*\/?>(?:<\/\w+>)?/g,"$1").replace(/<[^>]+>/g,"").replace(/!\[[^\]]*\]\([^)]*\)/g,"").replace(/\[([^\]]+)\]\([^)]*\)/g,"$1").replace(/[*_`]/g,"");
+  const lines=t.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>l.startsWith("#")?{h:l.replace(/^#+\s*/,"")}:{t:l.replace(/^([-*•]|\d+\.)\s+/,"• ")});
+  const out=[];let n=0;for(const l of lines){const s=l.h||l.t;if(n+s.length>520){if(l.t&&n<520)out.push({t:s.slice(0,520-n).replace(/\s+\S*$/,"")+"…"});break}out.push(l);n+=s.length}return out}
+function digestHTML(i){const d=DIG[i.ref];
+  if(i.kind!=="linear")return `<p>${esc(i.title)}</p>`;
+  if(!d)return `<p class="dmuted">${mcp?"Loading summary…":"Summary needs Linear on claude.ai."}</p>`;
+  if(d.err)return `<p class="dmuted">${esc(d.err)}</p>`;
+  if(!d.lines.length)return `<p class="dmuted">No description in Linear.</p>`;
+  return d.lines.map(l=>l.h?`<h4>${esc(l.h)}</h4>`:`<p>${esc(l.t)}</p>`).join("")}
+async function loadDigest(i){if(!mcp||DIG[i.ref])return;DIG[i.ref]={lines:[],loading:true};
+  try{const r=await mcp.callTool("Linear","get_issue",{id:i.ref,fields:["description","gitBranchName"]},{cache:{staleTime:600000}});
+    const p=(r&&r.payload)||{};DIG[i.ref]={lines:digestOf(p.description),branch:p.gitBranchName||null}}
+  catch(e){DIG[i.ref]={lines:[],err:linErr(e)}}
+  const el=$("digest");if(el)renderHero();
+  document.querySelectorAll(`.kc[data-kref="${CSS.escape(i.ref)}"] .ktip`).forEach(t=>t.innerHTML=digestHTML(i));
+  const ft=$("ftip");if(ft&&ft.dataset.ref===i.ref)ft.innerHTML=ftipHTML(i)}
+function ftipHTML(i){return `<b class="ft-k">${esc(i.ref)}</b>${digestHTML(i)}`}
+(function(){const ft=document.createElement("div");ft.id="ftip";ft.className="ftip";ft.setAttribute("role","tooltip");ft.hidden=true;document.body.appendChild(ft);let tm=null;
+  document.addEventListener("mouseover",e=>{const li=e.target.closest("li[data-tip]");if(!li||e.target.closest("select,.pi-a,.kown")){if(!li||ft.dataset.ref!==li.dataset.kref){clearTimeout(tm);ft.hidden=true;ft.dataset.ref=""}else if(e.target.closest("select,.pi-a,.kown")){ft.hidden=true}return}
+    const i=S.items.find(x=>x.id===li.dataset.kid);if(!i)return;if(ft.dataset.ref===i.ref&&!ft.hidden)return;
+    clearTimeout(tm);tm=setTimeout(()=>{ft.dataset.ref=i.ref;ft.innerHTML=ftipHTML(i);ft.hidden=false;const r=li.getBoundingClientRect();const w=Math.min(380,innerWidth-24);
+      ft.style.width=w+"px";ft.style.left=Math.max(12,Math.min(r.left,innerWidth-w-12))+"px";const below=r.bottom+8;ft.style.top=(below+180>innerHeight?Math.max(8,r.top-8-ft.offsetHeight):below)+"px"},300)});
+  document.addEventListener("mouseout",e=>{const li=e.target.closest("li[data-tip]");if(li&&!li.contains(e.relatedTarget)){clearTimeout(tm);ft.hidden=true;ft.dataset.ref=""}});
+  document.addEventListener("scroll",()=>{ft.hidden=true;ft.dataset.ref=""},true)})();
+const PRI={map:null,loading:false,err:null,open:false,n:8,busy:{}};
+const PL=[[1,"Urgent","u"],[2,"High","h"],[3,"Medium","m"],[4,"Low","l"],[0,"No priority","n"]];
+async function loadPri(){if(!mcp||PRI.loading)return;PRI.loading=true;PRI.err=null;
+  try{const m={};let cursor=null;
+    for(let k=0;k<8;k++){const r=await mcp.callTool("Linear","list_issues",Object.assign({...TEAM(),limit:250,fields:["priority","statusType"]},cursor?{cursor}:{}),{cache:{staleTime:300000}});
+      const p=(r&&r.payload)||{};(p.issues||[]).forEach(x=>{if(x.statusType!=="completed"&&x.statusType!=="canceled")m[x.id]=x.priority&&typeof x.priority==="object"?x.priority.value:(x.priority??0)});
+      if(!p.hasNextPage||!p.cursor)break;cursor=p.cursor}
+    PRI.map=m}
+  catch(e){PRI.err=linErr(e)}
+  PRI.loading=false;renderHero()}
+function priBlock(all){
+  const lin=all.filter(i=>i.kind==="linear");
+  if(!PRI.map)return `<div class="wk-h sm">All open by priority</div><div class="wk-s">${PRI.err?esc(PRI.err):mcp?"Loading priorities from Linear…":"Priorities need Linear on claude.ai."}</div>`;
+  const known=lin.filter(i=>i.ref in PRI.map);
+  const c={};PL.forEach(([v])=>c[v]=0);known.forEach(i=>{const v=PRI.map[i.ref]||0;c[v]=(c[v]||0)+1});
+  const tot=Math.max(1,known.length),w=n=>(100*n/tot).toFixed(1);
+  const none=known.filter(i=>!PRI.map[i.ref]).sort((a,b)=>(isOD(b)-isOD(a))||(a.due||"9").localeCompare(b.due||"9"));
+  const list=PRI.open?`<div class="pri-list">${none.slice(0,PRI.n).map(i=>`<div class="pri-row"><a class="pri-t" ${ext(i.url||"#")} title="${esc(i.title)}"><span>${esc(i.ref)}</span> ${esc(i.title)}</a><div class="pri-b">${PL.slice(0,4).map(([v,l,k])=>`<button type="button" class="pb ${k}" data-pri-set="${v}" data-ref="${esc(i.ref)}" title="${l}" aria-label="Set ${esc(i.ref)} to ${l}" ${PRI.busy[i.ref]?"disabled":""}>${l[0]}</button>`).join("")}</div></div>`).join("")}${none.length>PRI.n?`<button type="button" class="pri-more" data-pri-more>Show ${Math.min(8,none.length-PRI.n)} more</button>`:""}</div>`:"";
+  return `<div class="wk-h sm">All open by priority</div>
+    <div class="wk-bar" role="img" aria-label="${PL.map(([v,l])=>c[v]+" "+l).join(", ")}">${PL.map(([v,,k])=>c[v]?`<i class="pr-${k}" style="width:${w(c[v])}%"></i>`:"").join("")}</div>
+    <div class="wk-leg">${PL.slice(0,4).map(([v,l,k])=>c[v]?`<span><i class="pr-${k}"></i>${c[v]} ${l.toLowerCase()}</span>`:"").join("")}${c[0]?`<button type="button" class="pri-open" data-pri-open aria-expanded="${PRI.open}"><i class="pr-n"></i>${c[0]} no priority · ${PRI.open?"Close":"Set in Linear →"}</button>`:""}</div>
+    ${list}`;
+}
+async function setPri(ref,v){if(!mcp||PRI.busy[ref])return;PRI.busy[ref]=true;renderHero();
+  try{await mcp.callTool("Linear","save_issue",{id:ref,priority:v});PRI.map[ref]=v;toast(ref+" set to "+PL.find(p=>p[0]===v)[1]+" in Linear")}
+  catch(e){toast(ref+": "+linErr(e))}
+  delete PRI.busy[ref];renderHero()}
+const CALS=()=>(CFG.calendars&&CFG.calendars.length?CFG.calendars:["primary"]);
+const EV={list:null,loading:false,err:null};
+function evText(s){return String(s||"").replace(/<br\s*\/?>|<\/p>|<\/li>/gi,"\n").replace(/<[^>]+>/g,"").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/\n{2,}/g,"\n").trim()}
+function evProject(e){const hay=(e.summary+" "+(e.description||"")+" "+(e.location||"")+" "+(e.attendees||[]).map(a=>a.email).join(" ")).toLowerCase();
+  for(const p of S.projects){const STOP=["personal","projects","project","tools","studio","program","startup","engine","platform","generation","grupo","the","and",...(CFG.stopwords||[]).map(x=>String(x).toLowerCase())];
+    const toks=[p.client,...String(p.name||"").split(/[·|,]/),...String(p.name||"").split(/[\s·|,]+/)].map(t=>String(t||"").trim().toLowerCase()).filter(t=>t.length>=4&&!STOP.includes(t));
+    if(toks.some(t=>hay.includes(t)))return p}return null}
+async function loadEvents(){if(!mcp||EV.loading)return;EV.loading=true;
+  try{const res=await Promise.allSettled(CALS().map(c=>mcp.callTool("Google Calendar","list_events",{calendarId:c,orderBy:"startTime",pageSize:60},{cache:{staleTime:600000}})));
+    const seen=new Set(),all=[];let ok=0,lastErr=null;
+    res.forEach(r=>{if(r.status!=="fulfilled"){lastErr=r.reason;return}ok++;((r.value&&r.value.payload)||{}).events?.forEach(e=>{
+      if(e.status==="cancelled"||!e.start||!e.start.dateTime||e.eventType==="BIRTHDAY"||e.eventType==="WORKING_LOCATION")return;
+      const k=(e.summary||"")+"|"+e.start.dateTime;if(seen.has(e.id)||seen.has(k))return;seen.add(e.id);seen.add(k);all.push(e)})});
+    if(!ok)throw lastErr;
+    const now=Date.now();
+    EV.list=all.filter(e=>new Date(e.end&&e.end.dateTime||e.start.dateTime).getTime()>now)
+      .map(e=>({e,p:evProject(e)})).filter(x=>!x.e.recurringEventId||x.p)
+      .sort((a,b)=>new Date(a.e.start.dateTime)-new Date(b.e.start.dateTime));EV.err=null}
+  catch(e){const c=e&&e.code;EV.err=c==="needs_reauth"?"Reconnect Google Calendar in claude.ai Settings, Connectors.":c==="server_not_connected"||c==="selection_required"?"Add the Google Calendar connector in claude.ai Settings, Connectors.":c==="not_in_manifest"?"Calendar is turned off for this page.":"Calendar did not answer."}
+  EV.loading=false;renderEvents()}
+function evWhen(dt){const d=new Date(dt),t=iso(d),tm=d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+  const tmr=new Date();tmr.setDate(tmr.getDate()+1);return (t===TODAY?"Today":t===iso(tmr)?"Tomorrow":d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"}))+" · "+tm}
+let EVH=new Set();try{EVH=new Set(JSON.parse(localStorage.getItem("ev-hidden")||"[]"))}catch(e){}
+function saveEVH(){try{localStorage.setItem("ev-hidden",JSON.stringify([...EVH].slice(-200)))}catch(e){}}
+const evEnd=e=>new Date(e.end&&e.end.dateTime||e.start.dateTime).getTime();
+function renderEvents(){const el=$("evs");if(!el)return;
+  if(mcp&&!EV.list&&!EV.loading&&!EV.err){loadEvents();}
+  const hd=$("ev-hd");
+  if(!EV.list){el.innerHTML=`<p class="ev-empty">${EV.err?esc(EV.err):mcp?"Loading your calendars…":"Calendar needs claude.ai with Google Calendar."}</p>`;if(hd)hd.innerHTML="";return}
+  const now=Date.now();
+  const upcoming=EV.list.filter(x=>evEnd(x.e)>now);
+  const hiddenN=upcoming.filter(x=>EVH.has(x.e.id)).length;
+  const max=matchMedia("(min-width: 1200px)").matches?5:4;
+  const list=upcoming.filter(x=>!EVH.has(x.e.id)).slice(0,max);
+  if(hd)hd.innerHTML=hiddenN?`<button type="button" class="ev-unhide" data-ev-unhide>Show ${hiddenN} hidden</button>`:"";
+  if(!list.length){el.innerHTML=`<div class="ev-empty"><b>No key events this week.</b> Your calendar is clear of one-off and project meetings. Good time for deep work.</div>`}
+  else el.innerHTML=list.map(({e,p})=>{const desc=evText(e.description);const st=new Date(e.start.dateTime).getTime();const live=st<=now&&now<evEnd(e);const soon=!live&&st-now<36e5;
+    return `<div class="ev-c"><a class="ev ${live?"ev-live":""}" ${ext(e.htmlLink)} aria-describedby="evd-${esc(e.id)}"><span class="ev-w ${soon?"soon":""}">${live?"Now · until "+esc(new Date(evEnd(e)).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})):esc(evWhen(e.start.dateTime))}</span><span class="ev-t">${esc(e.summary||"(no title)")}</span>${p?`<span class="ev-p">${esc(p.name)}</span>`:""}
+      <span class="ev-d" id="evd-${esc(e.id)}" role="tooltip">${desc?esc(desc.slice(0,320))+(desc.length>320?"…":""):"No description."}${e.location?`<br><em>${esc(e.location)}</em>`:""}</span></a><button type="button" class="ev-x" data-ev-hide="${esc(e.id)}" aria-label="Hide ${esc(e.summary||"event")} from this view" title="Hide from this view"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>`}).join("");
+  el.querySelectorAll("[data-ev-hide]").forEach(b=>b.onclick=e=>{e.preventDefault();e.stopPropagation();EVH.add(b.dataset.evHide);saveEVH();renderEvents();toast("Event hidden from this view",()=>{EVH.delete(b.dataset.evHide);saveEVH();renderEvents()})});
+  if(hd)hd.querySelectorAll("[data-ev-unhide]").forEach(b=>b.onclick=()=>{upcoming.forEach(x=>EVH.delete(x.e.id));saveEVH();renderEvents()});
+}
+setInterval(()=>{if(EV.list)renderEvents()},60000);
+matchMedia("(min-width: 1200px)").addEventListener("change",()=>{if(EV.list)renderEvents()});
+function weekEnd(){const d=parse(TODAY);const dow=d.getDay();d.setDate(d.getDate()+(dow===0?0:7-dow));return iso(d)}
+function pickJump(list){const h=(S.meta&&S.meta.headline)||"";
+  const lead=list.find(i=>i.ref&&h.includes(i.ref));if(lead)return {i:lead,urgent:/urgent|urgente/i.test(h)||/urgent|urgente/i.test(lead.title||"")};
+  const hot=list.find(i=>(i.flags||[]).some(f=>HOTF.includes(f)));if(hot)return {i:hot,urgent:true};
+  const td=list.find(i=>i.due===TODAY&&i.status==="In Progress")||list.find(i=>i.due===TODAY);if(td)return {i:td,urgent:false};
+  return list[0]?{i:list[0],urgent:false}:null}
+function renderHero(){
+  const m=S.meta||{};
+  if(m.generated_at)$("stamp").textContent="Brief "+fmtT(m.generated_at);
+  const all=S.items.filter(open);
+  $("n-projects").textContent=S.projects.length||"";$("n-plan").textContent=all.length||"";
+  const pick=pickJump(hotList());const jump=$("jump");
+  if(pick){const i=pick.i;
+    jump.className="jump"+(pick.urgent?" urgent":"");
+    jump.innerHTML=`<div class="jtag">${pick.urgent?`<i class="pdot"></i>Urgent`:"Jump in"}</div>
+      <div class="jt-wrap"><h1 class="jt" tabindex="0" aria-describedby="digest"><a ${ext(i.url||"#")}>${esc(i.title)}</a></h1><div class="digest" id="digest" role="tooltip">${digestHTML(i)}</div></div>
+      <div class="jmeta">${esc(i.ref||"Idea")} · ${esc(pname(i.project))}</div>
+      <div class="acts-row"><a class="act go" ${ext(codeURL(i))} title="Open Claude Code with this issue">Code ↗</a><a class="act" ${ext(askURL(i))} title="Ask Claude about this issue">Ask ↗</a>${i.kind==="linear"?`<button type="button" class="act" data-qa="done" data-id="${esc(i.id)}">Done</button>`:""}<button type="button" class="act ghost" data-qa="this_week" data-id="${esc(i.id)}">Later this week</button></div>`;
+    if(i.kind==="linear"&&!DIG[i.ref])loadDigest(i);
+  }else{jump.className="jump calm";jump.innerHTML=`<div class="jtag">All clear</div><h1>Nothing pressing. Pick something from the plan.</h1>`}
+  const wk=m.week||null,we=weekEnd();
+  const mon=(()=>{const d=parse(TODAY);const dow=d.getDay();d.setDate(d.getDate()-(dow===0?6:dow-1));return iso(d)})();
+  const planned=all.filter(i=>i.due&&i.due>=mon&&i.due<=we);
+  const prog=planned.filter(i=>/in progress|in review|started/i.test(i.status||"")).length,todo=planned.length-prog;
+  const done=wk&&typeof wk.done==="number"?wk.done:null;
+  const tot=Math.max(1,(done||0)+prog+todo),w=n=>(100*n/tot).toFixed(1);
+  const nd=all.filter(i=>!i.due).length,od=all.filter(isOD).length,noOwn=all.filter(i=>i.kind==="linear"&&!i.owner).length;
+  const row=(n,label,verb,act)=>n?`<button type="button" class="org" data-org="${act}"><b>${n}</b><span>${label}</span><em>${verb} →</em></button>`:"";
+  $("week").innerHTML=`<div class="wk-h">Your week</div>
+    <div class="wk-prog">
+      <div class="wk-n">${done!==null?`<b>${done}</b><span>done this week</span>`:`<b>${planned.length}</b><span>planned this week</span>`}</div>
+      <div class="wk-bar" role="img" aria-label="This week: ${done??0} done, ${prog} in progress, ${todo} not started"><i class="d" style="width:${w(done||0)}%"></i><i class="p" style="width:${w(prog)}%"></i><i class="t" style="width:${w(todo)}%"></i></div>
+      <div class="wk-leg">${done!==null?`<span><i class="d"></i>${done} done</span>`:""}<span><i class="p"></i>${prog} in progress</span><span><i class="t"></i>${todo} not started</span></div>
+      ${done===null?`<div class="wk-s">Done count starts with the next 9:00 brief.</div>`:""}
+    </div>
+    ${priBlock(all)}
+    <div class="wk-h sm">Organize the rest</div>
+    <div class="orgs">${row(nd,"without a date","Prioritize","unscheduled")}${row(noOwn,"without an owner","Assign","owner")}${row(od,"to re-plan","Re-plan","late")}</div>`;
+  document.querySelectorAll("header [data-qa]").forEach(b=>b.onclick=()=>quick(b.dataset.id,b.dataset.qa));
+  $("week").querySelectorAll("[data-org]").forEach(b=>b.onclick=()=>organize(b.dataset.org));
+  $("week").querySelectorAll("[data-pri-open]").forEach(b=>b.onclick=()=>{PRI.open=!PRI.open;PRI.n=8;renderHero()});
+  $("week").querySelectorAll("[data-pri-more]").forEach(b=>b.onclick=()=>{PRI.n+=8;renderHero()});
+  $("week").querySelectorAll("[data-pri-set]").forEach(b=>b.onclick=()=>setPri(b.dataset.ref,+b.dataset.priSet));
+  if(mcp&&!PRI.map&&!PRI.loading&&!PRI.err)loadPri();
+  renderEvents();
+}
+function organize(what){openSec(what==="owner"?"p-projects":"s-plan");
+  const t=document.querySelector('.tab[data-tab="'+(what==="owner"?"projects":"today")+'"]');if(t&&t.getAttribute("aria-selected")!=="true")t.click();
+  const target=what==="owner"?$("projects"):$("board");
+  if(what!=="owner"){S.fp.clear();S.fu.clear();renderFilter();renderBoard();
+    const col=$("board").querySelector(what==="unscheduled"?".col.unscheduled":".col.today");if(col){col.classList.add("flash");setTimeout(()=>col.classList.remove("flash"),1600)}}
+  if(target)target.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+}
+let toastT=null;
+function toast(msg,undo){const t=$("toast");t.innerHTML=`<span>${esc(msg)}</span>${undo?`<button type="button" id="undo">Undo</button>`:""}`;t.hidden=false;
+  if(undo)$("undo").onclick=()=>{undo();t.hidden=true};clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,6000)}
+async function quick(id,what){
+  const it=S.items.find(i=>i.id===id);if(!it)return;
+  const name=it.ref||"Idea";
+  S.hide.add(id);renderHero();
+  if(what==="done"&&it.kind==="linear"){
+    toast(name+": saving Done to Linear…");
+    await setStatus(id,"Done");
+    const p=S.pending[id];
+    if(p&&p.kind==="bad"){S.hide.delete(id);renderHero();toast(name+": "+p.text)}else toast(name+" marked Done"+(p&&p.kind==="wait"?" at next brief":" in Linear"));
+    return}
+  if(!db){S.hide.delete(id);renderHero();toast("Not saved. Open the radar on claude.ai.");return}
+  try{await db.doc("items/"+id).update({bucket_request:what,bucket_request_at:new Date().toISOString()});
+    toast(`${name} → ${BL[what]}. Next brief sets the date.`,async()=>{try{await db.doc("items/"+id).update({bucket_request:null})}catch(e){}S.hide.delete(id);renderHero()})}
+  catch(e){S.hide.delete(id);renderHero();toast("Not saved. Try again.")}
+}
+
+let DMH=new Set();try{DMH=new Set(JSON.parse(localStorage.getItem("dm-hidden")||"[]"))}catch(e){}
+function saveDMH(){try{localStorage.setItem("dm-hidden",JSON.stringify([...DMH]))}catch(e){}}
+function renderDueMap(){
+  const days=[...Array(14)].map((_,k)=>{const d=new Date();d.setDate(d.getDate()+k);return d});
+  const cols=`minmax(190px,1.6fr) 64px repeat(14,minmax(40px,1fr))`;
+  const rows=S.projects.filter(p=>S.items.some(i=>i.project===p.slug&&open(i)));
+  const shown=rows.filter(p=>!DMH.has(p.slug)),hidden=rows.filter(p=>DMH.has(p.slug));
+  const eye=`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1.5 8s2.4-4.5 6.5-4.5S14.5 8 14.5 8s-2.4 4.5-6.5 4.5S1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></svg>`;
+  const eyeOff=`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 2l12 12M6.4 4A7 7 0 0 1 8 3.5C12.1 3.5 14.5 8 14.5 8a12 12 0 0 1-2 2.6M9.6 12.2A6.7 6.7 0 0 1 8 12.5C3.9 12.5 1.5 8 1.5 8a12 12 0 0 1 2.4-3"/></svg>`;
+  let h=`<div class="c h rl">Project</div><div class="c h od">Past<br>due</div>`+days.map(d=>{const wk=d.getDay()===0||d.getDay()===6;const t=iso(d)===TODAY;return `<div class="c h ${wk?"wk":""} ${t?"today":""}">${d.toLocaleDateString("en-US",{weekday:"short"})}<br>${d.getDate()}</div>`}).join("");
+  if(!rows.length)h+=`<div class="c" style="grid-column:1/-1"><span class="empty">No dated items yet.</span></div>`;
+  const line=(key,label,its,go)=>{
+    const od=its.filter(isOD);const tip=l=>esc(l.map(i=>i.ref+" "+i.title).slice(0,25).join("\n"));
+    const btn=(cls,lab)=>`<button type="button" class="dot ${cls}" ${go?`data-go="${esc(go)}"`:`data-dmshow-all`} title="${tip(lab)}" aria-label="${lab.length} items${go?", open project":", show hidden projects"}">${lab.length}</button>`;
+    let r=`<div class="c rl" data-r="${esc(key)}">${label}</div><div class="c od" data-r="${esc(key)}">${od.length?btn("od",od):""}</div>`;
+    days.forEach(d=>{const k=iso(d);const hit=its.filter(i=>i.due===k);const wk=d.getDay()===0||d.getDay()===6;
+      r+=`<div class="c ${wk?"wk":""}" data-r="${esc(key)}">${hit.length?btn(k===TODAY?"td":"",hit):""}</div>`});
+    return r};
+  shown.forEach(p=>{const its=S.items.filter(i=>i.project===p.slug&&open(i));
+    h+=line(p.slug,`<button type="button" class="dmx" data-dmhide="${esc(p.slug)}" aria-label="Hide ${esc(p.name)}, group into Others" title="Hide (group into Others)">${eyeOff}</button><a href="#proj-${esc(p.slug)}" data-go="${esc(p.slug)}">${esc(p.name)}</a>`,its,p.slug)});
+  if(hidden.length){const its=S.items.filter(i=>open(i)&&DMH.has(i.project));
+    h+=line("__others",`<button type="button" class="dmx" data-dmshow-all aria-label="Show all hidden projects" title="Show all in their own rows">${eye}</button><span class="oth"><b>Others</b><span class="oth-l">${hidden.map(p=>`<button type="button" class="ochip" data-dmshow="${esc(p.slug)}" title="Show ${esc(p.name)} in its own row">+ ${esc(p.name)}</button>`).join("")}</span></span>`,its,null)}
+  const dm=$("dm");dm.style.gridTemplateColumns=cols;dm.innerHTML=h;
+  dm.querySelectorAll("[data-go]").forEach(el=>el.addEventListener("click",e=>{e.preventDefault();goToProject(el.dataset.go)}));
+  dm.querySelectorAll("[data-dmhide]").forEach(b=>b.onclick=e=>{e.stopPropagation();DMH.add(b.dataset.dmhide);saveDMH();renderDueMap()});
+  dm.querySelectorAll("[data-dmshow]").forEach(b=>b.onclick=e=>{e.stopPropagation();DMH.delete(b.dataset.dmshow);saveDMH();renderDueMap()});
+  dm.querySelectorAll("[data-dmshow-all]").forEach(b=>b.onclick=e=>{e.stopPropagation();DMH.clear();saveDMH();renderDueMap()});
+  if(!dm.dataset.hov){dm.dataset.hov="1";
+    dm.addEventListener("mouseover",e=>{const c=e.target.closest("[data-r]");const r=c&&c.dataset.r;if(dm._hr===r)return;dm._hr=r;
+      dm.querySelectorAll(".rhov").forEach(x=>x.classList.remove("rhov"));if(r)dm.querySelectorAll(`[data-r="${CSS.escape(r)}"]`).forEach(x=>x.classList.add("rhov"))});
+    dm.addEventListener("mouseleave",()=>{dm._hr=null;dm.querySelectorAll(".rhov").forEach(x=>x.classList.remove("rhov"))})}
+}
+
+function renderProjects(){
+  const el=$("projects");
+  if(!S.projects.length){el.innerHTML=`<p class="empty">No projects yet. The 9:00 brief fills this in.</p>`;return}
+  $("p-hint").textContent=S.projects.length+" tracked · health from Linear, GitHub and deploys";
+  el.innerHTML=S.projects.map(p=>{
+    const its=S.items.filter(i=>i.project===p.slug&&open(i));
+    const od=its.filter(isOD).length,nd=its.filter(i=>!i.due).length,dated=its.length-od-nd;
+    const st=p.stats||{};const pct=Math.max(0,Math.min(100,p.progress_pct||0));
+    const openShare=100-pct,tot=Math.max(its.length,1);
+    const seg=(n)=>openShare*n/tot;
+    const nxt=its.filter(i=>i.due&&i.due>=TODAY).sort((a,b)=>a.due.localeCompare(b.due))[0];
+    const alerts=(p.alerts||[]).slice(0,5).map(a=>`<li><span class="sev ${esc(a.kind)}"></span><span>${a.url?`<a ${ext(a.url)}>${esc(a.text)}</a>`:esc(a.text)}</span></li>`).join("");
+    const links=[p.linear_url&&`<a class="lk" ${ext(p.linear_url)}>Linear</a>`,...(p.repos||[]).map(r=>`<a class="lk" ${ext(r.url)} title="${esc(r.name)}">${esc(String(r.name||"repo").split("/").pop())}</a>`),p.deploy_url&&`<a class="lk" ${ext(p.deploy_url)}>Live</a>`].filter(Boolean).join("");
+    const initial=(p.client||p.name||"?").trim()[0].toUpperCase();
+    return `<article class="card hc-${esc(p.health||"unknown")}" id="proj-${esc(p.slug)}">
+      <div class="ph"><div class="mg" aria-hidden="true">${esc(initial)}</div><div><div class="eyebrow">${esc(p.client||"Client")}${p.target_date?` · target ${fmtD(p.target_date)}`:""}</div><h3>${esc(p.name)}</h3></div><div class="ph-a"><span class="pill h-${esc(p.health||"unknown")}">${esc((p.health||"unknown").replace("_"," "))}</span><button type="button" class="xbtn ${refreshBusy("project:"+p.slug)?"spin":""}" data-refresh="${esc(p.slug)}" aria-label="Refresh ${esc(p.name)} only" title="${esc(refreshTitle("project:"+p.slug))}" ${refreshBusy("project:"+p.slug)?"disabled":""}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg></button><button type="button" class="xbtn" data-full="${esc(p.slug)}" aria-label="Open ${esc(p.name)} full screen" title="Full screen"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/></svg></button></div></div>
+      ${refreshNote("project:"+p.slug)}
+      ${p.summary?`<p class="sum sum1" title="${esc(p.summary)}">${esc(p.summary)}</p>`:""}
+      <div class="prog">
+        <div class="stack" role="img" aria-label="${pct}% done, ${dated} dated, ${od} overdue, ${nd} without date"><i class="s-done" style="width:${pct}%"></i><i class="s-dated" style="width:${seg(dated)}%"></i><i class="s-od" style="width:${seg(od)}%"></i><i class="s-nd" style="width:${seg(nd)}%"></i></div>
+      </div>
+      ${issuesList(p,its)}
+      ${links?`<div class="links">${links}</div>`:""}
+    </article>`}).join("");
+  el.querySelectorAll("[data-refresh]").forEach(b=>b.addEventListener("click",()=>requestRefresh("project:"+b.dataset.refresh)));
+  el.querySelectorAll("[data-full]").forEach(b=>b.addEventListener("click",()=>openFull(b.dataset.full,b)));
+  el.querySelectorAll("details.iss").forEach(d=>d.addEventListener("toggle",()=>{d.open?S.closedCards.delete(d.dataset.p):S.closedCards.add(d.dataset.p)}));
+  el.querySelectorAll("select.st").forEach(sel=>sel.addEventListener("change",()=>setStatus(sel.dataset.id,sel.value,sel)));
+}
+const STATUSES=["Backlog","Todo","In Progress","In Review","Done","Canceled"];
+function issuesList(p,its){
+  const lin=its.filter(i=>i.kind==="linear").sort((a,b)=>(isOD(b)-isOD(a))||(a.due||"9").localeCompare(b.due||"9")||a.ref.localeCompare(b.ref,undefined,{numeric:true}));
+  if(!lin.length)return "";
+  const rows=lin.map(i=>{
+    const pend=S.pending[i.id];
+    const cur=pend?pend.status:i.status;
+    const opts=[...new Set([...STATUSES,cur].filter(Boolean))].map(v=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(v)}</option>`).join("");
+    const msg=pend?`<span class="st-msg ${pend.kind}">${esc(pend.text)}</span>`:(i.status_request?`<span class="st-msg wait">→ ${esc(i.status_request)} at next brief</span>`:"");
+    const om=BX.own&&BX.own[i.id];
+    return `<li class="pi ${isOD(i)?"od":""}" data-kref="${esc(i.ref)}" data-kid="${esc(i.id)}" data-tip><span class="it-t"><a ${ext(i.url)}>${esc(i.title)}</a></span>
+      <span class="pi-c"><label class="kown kst" style="--oc:${stColor(cur)}"><i></i><select class="st" id="st-${esc(i.id)}" data-id="${esc(i.id)}" aria-label="Status of ${esc(i.ref)}" ${pend&&pend.kind==="wait"?"disabled":""}>${opts}</select></label>${ownPill(i)}</span>
+      <span class="it-m"><span class="mono">${isOD(i)?daysLate(i)+"d late · ":""}${fmtD(i.due)}</span>${msg}${om?`<span class="st-msg ${om.k}">${esc(om.t)}</span>`:""}<span class="pi-a"><a ${ext(codeURL(i))}>Code</a><a ${ext(askURL(i))}>Ask</a></span></span></li>`}).join("");
+  return `<details class="iss" data-p="${esc(p.slug)}" ${S.closedCards.has(p.slug)?"":"open"}><summary>Open issues <span class="mono hint">${lin.length}</span></summary><ul>${rows}</ul></details>`;
+}
+function goToProject(slug){openSec("p-projects");
+  const tab=document.querySelector('.tab[data-tab="projects"]');if(tab&&tab.getAttribute("aria-selected")!=="true")tab.click();
+  S.openCards.add(slug);renderProjects();
+  const c=document.getElementById("proj-"+slug);if(!c)return;
+  c.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+  c.classList.add("flash");setTimeout(()=>c.classList.remove("flash"),1600);
+}
+async function setStatus(id,status,sel){
+  const it=S.items.find(i=>i.id===id);if(!it||!status||status===it.status)return;
+  S.pending[id]={status,kind:"wait",text:"Saving to Linear…"};rerenderP();
+  const closed=status==="Done"||status==="Canceled";
+  if(mcp){
+    try{
+      await mcp.callTool("Linear","save_issue",{id:it.ref,state:status});
+      S.pending[id]={status,kind:"ok",text:"Saved in Linear"};
+      if(db){try{await db.doc("items/"+id).update(Object.assign({status,status_changed_at:new Date().toISOString(),status_request:null},closed?{bucket:"done"}:{}))}catch(e){}}
+      renderAll();setTimeout(()=>{delete S.pending[id];rerenderP()},4000);return;
+    }catch(e){
+      const code=e&&e.code;
+      if(code==="needs_reauth"){S.pending[id]={status:it.status,kind:"bad",text:"Reconnect Linear in claude.ai Settings, Connectors"};rerenderP();return}
+      if(code==="tool_error"){S.pending[id]={status:it.status,kind:"bad",text:"Linear refused: "+(e.message||"check the issue")};rerenderP();return}
+      if(code==="server_unavailable"||code==="upstream_error"){S.pending[id]={status:it.status,kind:"bad",text:"Linear did not answer. Check the issue in Linear before retrying."};rerenderP();return}
+      /* not connected / not allowed: fall through to the brief */
+    }
+  }
+  if(!db){S.pending[id]={status:it.status,kind:"bad",text:"Not saved. Open the radar on claude.ai."};rerenderP();return}
+  try{await db.doc("items/"+id).update({status_request:status,status_request_at:new Date().toISOString()});
+    S.pending[id]={status,kind:"wait",text:"Queued: the next brief sets it in Linear"};rerenderP();setTimeout(()=>{delete S.pending[id];rerenderP()},4000)}
+  catch(e){S.pending[id]={status:it.status,kind:"bad",text:"Not saved. Try again."};rerenderP()}
+}
+
+function msel(key,label,opts,set){
+  const n=set.size;const sum=n?(n===1?(opts.find(o=>set.has(o[0]))||[,"1 selected"])[1]:n+" selected"):label;
+  return `<div class="ms" data-ms="${key}"><button type="button" class="ms-b ${n?"on":""}" aria-haspopup="true" aria-expanded="false"><span>${esc(sum)}</span><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button><div class="ms-p" role="listbox" aria-multiselectable="true">${opts.map(([v,l,c])=>`<label class="ms-o"><input type="checkbox" value="${esc(v)}" ${set.has(v)?"checked":""}>${c?`<i style="background:${c}"></i>`:""}<span>${esc(l)}</span></label>`).join("")}</div></div>`}
+function renderFilter(){
+  const popen=[...document.querySelectorAll("#pfilter .ms.open")].map(e=>e.dataset.ms);
+  const po=S.projects.map(p=>[p.slug,p.name]);
+  const names=new Set([...S.items.map(i=>i.owner&&i.owner.name).filter(Boolean),...(CL.items||[]).map(i=>i.owner&&i.owner.name).filter(Boolean)]);
+  const uo=[...[...names].sort().map(n=>[n,n,ownColor(n)]),["__none","Unassigned","var(--ash)"]];
+  const any=S.fp.size||S.fu.size;
+  $("pfilter").innerHTML=msel("p","All projects",po,S.fp)+msel("u","All users",uo,S.fu)+(any?`<button type="button" class="ms-x" data-msx>Clear filters</button>`:"");
+  const F=$("pfilter");
+  F.querySelectorAll(".ms").forEach(m=>{const set=m.dataset.ms==="p"?S.fp:S.fu;const b=m.querySelector(".ms-b");
+    if(popen.includes(m.dataset.ms)){m.classList.add("open");b.setAttribute("aria-expanded","true")}
+    b.onclick=e=>{e.stopPropagation();const o=!m.classList.contains("open");F.querySelectorAll(".ms").forEach(x=>{x.classList.remove("open");x.querySelector(".ms-b").setAttribute("aria-expanded","false")});m.classList.toggle("open",o);b.setAttribute("aria-expanded",String(o))};
+    m.querySelectorAll("input").forEach(c=>c.onchange=()=>{c.checked?set.add(c.value):set.delete(c.value);renderFilter();renderBoard()})});
+  const x=F.querySelector("[data-msx]");if(x)x.onclick=()=>{S.fp.clear();S.fu.clear();renderFilter();renderBoard()};
+}
+document.addEventListener("click",e=>{if(!e.target.closest("#pfilter .ms"))document.querySelectorAll("#pfilter .ms.open").forEach(m=>{m.classList.remove("open");m.querySelector(".ms-b").setAttribute("aria-expanded","false")})});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll("#pfilter .ms.open").forEach(m=>m.classList.remove("open"))});
+
+const PV={view:"stage",off:new Set(["Backlog","Done","Canceled"]),wk:new Set(["overdue","w0"])};
+const CLOSED=["Done","Canceled"];
+const CL={items:null,loading:false,err:null};
+async function loadClosed(){if(!mcp||CL.loading||CL.items)return;CL.loading=true;
+  try{const out=[];for(const st of ["completed","canceled"]){const r=await mcp.callTool("Linear","list_issues",{...TEAM(),state:st,updatedAt:"-P14D",limit:150,fields:["title","project","assignee","dueDate","url","completedAt","canceledAt"]},{cache:{staleTime:300000}});
+      (pay(r).issues||[]).forEach(x=>{const pn=normP(x.project||"");const p=S.projects.find(q=>normP(q.linear_project||q.name)===pn||normP(q.name)===pn);
+        out.push({id:"cl-"+x.id,ref:x.id,kind:"linear",closed:true,title:x.title,status:st==="completed"?"Done":"Canceled",project:p?p.slug:"general",due:x.dueDate||String(x.completedAt||x.canceledAt||"").slice(0,10)||null,url:x.url,owner:x.assignee?{kind:"user",name:x.assignee}:null,bucket:"closed"})})}
+    CL.items=out}catch(e){CL.err=linErr(e);CL.items=[]}
+  CL.loading=false;renderBoard()}
+try{const v=JSON.parse(localStorage.getItem("plan-view2")||"null");if(v){PV.view=v.view||"stage";if(Array.isArray(v.off))PV.off=new Set(v.off);if(v.wk)PV.wk=new Set(v.wk)}}catch(e){}
+function savePV(){try{localStorage.setItem("plan-view2",JSON.stringify({view:PV.view,off:[...PV.off],wk:[...PV.wk]}))}catch(e){}}
+function monOf(ds){const d=parse(ds);const dw=d.getDay()===0?7:d.getDay();d.setDate(d.getDate()-(dw-1));return iso(d)}
+function weekKey(i){if(!i.due)return "nodate";if(isOD(i))return "overdue";const m0=monOf(TODAY),m=monOf(i.due);const n=Math.round((parse(m)-parse(m0))/(7*864e5));return "w"+n}
+function weekLabel(k,sample){if(k==="nodate")return "No date";if(k==="overdue")return "Overdue";const n=+k.slice(1);if(n===0)return "This week";if(n===1)return "Next week";return "Week of "+fmtD(monOf(sample.due))}
+function renderPCtl(base){
+  const sts=[...new Set([...STATUSES,...base.map(i=>i.status||"Idea")])].sort((a,b)=>{const x=STATUSES.indexOf(a),y=STATUSES.indexOf(b);return (x<0?99:x)-(y<0?99:y)});
+  const cnt=s=>CLOSED.includes(s)&&!CL.items?(CL.loading?"…":"·"):base.filter(i=>(i.status||"Idea")===s).length;
+  $("pctl").innerHTML=`<div class="seg" role="group" aria-label="View"><button type="button" data-pv="stage" aria-pressed="${PV.view==="stage"}">By stage</button><button type="button" data-pv="week" aria-pressed="${PV.view==="week"}">By week</button></div>
+    <div class="stt" role="group" aria-label="Filter by status"><span class="stt-l">Status</span>${sts.map(s=>`<button type="button" class="tg ${PV.off.has(s)?"":"on"}" data-pst="${esc(s)}" aria-pressed="${!PV.off.has(s)}">${esc(s)} <span class="mono">${cnt(s)}</span></button>`).join("")}${PV.off.size?`<button type="button" class="tg clr" data-pst-clear>Show all</button>`:""}</div>
+    ${PV.view==="week"?`<div class="wk-tools"><button type="button" data-wk-only>Only this week</button><button type="button" data-wk-all>Expand all</button><button type="button" data-wk-none>Collapse all</button></div>`:""}`;
+  const c=$("pctl");
+  c.querySelectorAll("[data-pv]").forEach(b=>b.onclick=()=>{PV.view=b.dataset.pv;savePV();renderBoard()});
+  c.querySelectorAll("[data-pst]").forEach(b=>b.onclick=()=>{const s=b.dataset.pst;PV.off.has(s)?PV.off.delete(s):PV.off.add(s);savePV();renderBoard()});
+  c.querySelectorAll("[data-pst-clear]").forEach(b=>b.onclick=()=>{PV.off.clear();savePV();renderBoard()});
+  c.querySelectorAll("[data-wk-only]").forEach(b=>b.onclick=()=>{PV.wk=new Set(["w0"]);savePV();renderBoard()});
+  c.querySelectorAll("[data-wk-all]").forEach(b=>b.onclick=()=>{PV.wk=new Set(["*"]);savePV();renderBoard()});
+  c.querySelectorAll("[data-wk-none]").forEach(b=>b.onclick=()=>{PV.wk=new Set();savePV();renderBoard()});
+}
+function renderBoard(){
+  if(CLOSED.some(s=>!PV.off.has(s))&&!CL.items)loadClosed();
+  const base=[...S.items.filter(i=>open(i)),...(CL.items||[])].filter(i=>(!S.fp.size||S.fp.has(i.project))&&(!S.fu.size||S.fu.has((i.owner&&i.owner.name)||"__none")));
+  renderPCtl(base);
+  const items=base.filter(i=>!PV.off.has(i.status||"Idea"));
+  const sortF=(a,c)=>(isOD(c)-isOD(a))||(a.due||"9").localeCompare(c.due||"9");
+  const bd=$("board");bd.classList.toggle("weeks",PV.view==="week");
+  if(PV.view==="week"){
+    const groups={};items.forEach(i=>{const k=weekKey(i);(groups[k]=groups[k]||[]).push(i)});
+    const order=Object.keys(groups).sort((a,b)=>{const r=k=>k==="overdue"?-1e3:k==="nodate"?1e3:+k.slice(1);return r(a)-r(b)});
+    const allSt=[...new Set([...STATUSES,...items.map(i=>i.status||"Idea")])].sort((a,b)=>{const x=STATUSES.indexOf(a),y=STATUSES.indexOf(b);return (x<0?99:x)-(y<0?99:y)});
+    const cols=allSt.filter(s=>!PV.off.has(s));
+    if(!order.includes("w0"))order.splice(order.findIndex(k=>k!=="overdue")<0?order.length:order.findIndex(k=>k!=="overdue"),0,"w0");
+    bd.innerHTML=order.length?order.map(k=>{const list=(groups[k]||[]).sort(sortF);const isOpen=PV.wk.has("*")||PV.wk.has(k);
+      return `<details class="wgrp ${k}" data-wk="${k}" ${isOpen?"open":""}><summary><h3>${esc(k==="w0"?"This week":weekLabel(k,list[0]||{due:TODAY}))}</h3><span>${list.length}</span></summary>
+        <div class="wcols" style="grid-template-columns:repeat(${cols.length},minmax(230px,1fr))">${cols.map(s=>{const cl=list.filter(i=>(i.status||"Idea")===s);
+          return `<div class="wcol dz" data-drop-week="${k}" data-drop-status="${esc(s)}"><div class="wcol-h"><span class="kown ro" style="--oc:${stColor(s)}"><i></i>${esc(s)}</span><span class="mono">${cl.length}</span></div>${cl.map(card).join("")}</div>`}).join("")}</div></details>`}).join(""):`<p class="empty">Nothing matches these filters.</p>`;
+    bd.querySelectorAll("details.wgrp").forEach(d=>d.addEventListener("toggle",()=>{const k=d.dataset.wk;if(PV.wk.has("*")){PV.wk=new Set(order)}d.open?PV.wk.add(k):PV.wk.delete(k);savePV()}));
+  }else{
+  const BK=[...BUCKETS,...(items.some(i=>i.closed)?[["closed","Closed"]]:[])];
+  bd.innerHTML=BK.map(([b,label])=>{
+    const list=items.filter(i=>(i.bucket||"unscheduled")===b).sort(sortF);
+    return `<div class="col dz ${b}" data-drop-bucket="${b}"><div class="col-h"><h3>${label}</h3><span>${list.length}</span></div>${list.map(card).join("")||`<div class="empty">Drop here</div>`}</div>`}).join("");}
+  bindDnD();
+  $("board").querySelectorAll("select[data-id]").forEach(s=>s.onchange=()=>moveItem(s.dataset.id,s.value,s));
+  bindBoard();if(mcp&&!L.users&&!BX.uload){BX.uload=true;ensureUsers().then(()=>{renderBoard();rerenderP()})}
+}
+const OWNC=["#7B80FF","#22D37A","#F5B84C","#FF7A90","#4CC3F5","#C58BFF"];
+
+function ownColor(n){const s=String(n||"");for(const [re,c] of USERC)if(re.test(s))return c;let x=0;for(const c of String(n||""))x=(x*31+c.charCodeAt(0))>>>0;return OWNC[x%OWNC.length]}
+const STC={"Backlog":"#888780","Todo":"#6E6D66","In Progress":"#E0A21B","In Review":"#1FB46E","Done":"#4B52FF","Canceled":"#A9A79F"};
+const stColor=s=>STC[s]||"#888780";
+function ownPill(i){const own=i.owner&&i.owner.name;const first=own?String(own).split(/\s+/)[0]:"";const users=L.users||[];
+  if(i.kind==="linear"&&mcp)return `<label class="kown" style="--oc:${own?ownColor(own):"var(--ash)"}"><i></i><select data-kown="${esc(i.id)}" aria-label="Assign ${esc(i.ref)}">${own?"":`<option value="" selected>Assign</option>`}${own&&!users.some(u=>u.name===own)?`<option value="" selected>${esc(first)}</option>`:""}${users.map(u=>`<option value="${esc(u.id)}" ${u.name===own?"selected":""}>${esc((u.name||u.email||"").split(/\s+/)[0])}</option>`).join("")}</select></label>`;
+  return own?`<span class="kown ro" style="--oc:${ownColor(own)}"><i></i>${esc(first)}</span>`:""}
+function card(i){
+  const od=isOD(i);const own=i.owner&&i.owner.name;const first=own?String(own).split(/\s+/)[0]:"";
+  const req=i.bucket_request?`<span class="moved">→ ${esc(BL[i.bucket_request]||"Done")}</span>`:"";
+  const pend=S.pending[i.id];const ownMsgTxt=BX.own&&BX.own[i.id];
+  const users=L.users||[];
+  const ownCtl=ownPill(i);
+  return `<div class="it kc ${od?"od":""}" data-kref="${esc(i.ref||"")}" data-kid="${esc(i.id)}" draggable="true">
+    <div class="kt"><span class="kref">${esc(i.kind==="idea"?"IDEA":i.ref||i.kind)}</span>${ownCtl}</div>
+    <a class="t" ${ext(i.url||"#")}>${esc(i.title)}</a>
+    <div class="kb"><span class="kdate">${i.due?(od?daysLate(i)+"d late · ":"")+fmtD(i.due):"No date"}</span>${req}${pend?`<span class="st-msg ${pend.kind}">${esc(pend.text)}</span>`:""}${ownMsgTxt?`<span class="st-msg ${ownMsgTxt.k}">${esc(ownMsgTxt.t)}</span>`:""}
+      <span class="kacts">${i.kind==="linear"?`<a ${ext(codeURL(i))}>Code</a><a ${ext(askURL(i))}>Ask</a>`:""}<select data-id="${esc(i.id)}" aria-label="Move ${esc(i.title)}"><option value="">Move</option>${BUCKETS.slice(0,4).map(([v,l])=>`<option value="${v}">${l}</option>`).join("")}<option value="done">Done</option></select></span></div>
+    ${i.kind==="linear"?`<div class="ktip" role="tooltip">${digestHTML(i)}</div>`:""}
+  </div>`;
+}
+let DRAG=null;
+function bindDnD(){const bd=$("board");if(bd.dataset.dnd)return;bd.dataset.dnd="1";
+  bd.addEventListener("dragstart",e=>{const c=e.target.closest(".kc");if(!c)return;DRAG=c.dataset.kid;c.classList.add("dragging");e.dataTransfer.effectAllowed="move";try{e.dataTransfer.setData("text/plain",DRAG)}catch(x){}
+    const ft=$("ftip");if(ft)ft.hidden=true});
+  bd.addEventListener("dragend",e=>{const c=e.target.closest(".kc");if(c)c.classList.remove("dragging");bd.querySelectorAll(".dz.over").forEach(z=>z.classList.remove("over"));DRAG=null});
+  bd.addEventListener("dragover",e=>{const z=e.target.closest(".dz");if(!z||!DRAG)return;e.preventDefault();e.dataTransfer.dropEffect="move";if(!z.classList.contains("over")){bd.querySelectorAll(".dz.over").forEach(x=>x.classList.remove("over"));z.classList.add("over")}});
+  bd.addEventListener("dragleave",e=>{const z=e.target.closest(".dz");if(z&&!z.contains(e.relatedTarget))z.classList.remove("over")});
+  bd.addEventListener("drop",e=>{const z=e.target.closest(".dz");if(!z||!DRAG)return;e.preventDefault();z.classList.remove("over");const i=S.items.find(x=>x.id===DRAG);DRAG=null;if(!i)return;
+    if(z.dataset.dropBucket)return dropStage(i,z.dataset.dropBucket);
+    dropWeek(i,z.dataset.dropWeek,z.dataset.dropStatus)});
+}
+async function dropStage(i,b){if(i.closed||b==="closed"){toast("Closed issues: change their status in By week");return}if((i.bucket||"unscheduled")===b)return;if(b==="unscheduled"){toast("Use By week › No date to clear a date");return}
+  if(!db){toast("Not saved. Open the radar on claude.ai.");return}
+  const prev=i.bucket;i.bucket_request=b;i.bucket=b;renderBoard();
+  try{await db.doc("items/"+i.id).update({bucket_request:b,bucket_request_at:new Date().toISOString()});toast(`${i.ref||"Idea"} → ${BL[b]}. Next brief sets the date.`)}
+  catch(e){i.bucket=prev;delete i.bucket_request;renderBoard();toast("Not saved. Try again.")}}
+async function dropWeek(i,wk,st){const curWk=weekKey(i);const tasks=[];
+  if(st!==(i.status||"Idea")){if(i.kind!=="linear"){toast("Ideas have no Linear status yet");}else tasks.push("status")}
+  let due=undefined;if(wk!==curWk&&wk!=="overdue"){due=wk==="nodate"?null:friday(+wk.slice(1));if(i.kind!=="linear"){toast("Move ideas by stage");due=undefined}}
+  if(due!==undefined)tasks.push("due");if(!tasks.length)return;
+  if(tasks.includes("status")){const prevSt=i.status;const pr=setStatus(i.id,st);i.status=st;renderBoard();pr.then(()=>{const pe=S.pending[i.id];if(pe&&pe.kind==="bad"){i.status=prevSt;renderBoard();toast(i.ref+": "+pe.text)}else toast(i.ref+" → "+st)})}
+  if(due!==undefined){if(!mcp){toast("Changing dates needs Linear on claude.ai");return}
+    const prev=i.due;i.due=due;renderBoard();
+    try{await mcp.callTool("Linear","save_issue",{id:i.ref,dueDate:due});if(db){try{await db.doc("items/"+i.id).update({due,due_changed_at:new Date().toISOString()})}catch(x){}}toast(`${i.ref} due ${due?fmtD(due):"cleared"} in Linear`)}
+    catch(e){i.due=prev;renderBoard();toast(i.ref+": "+linErr(e))}}}
+function bindBoard(){const el=document.body;if(el.dataset.kb)return;el.dataset.kb="1";
+  el.addEventListener("mouseover",e=>{const c=e.target.closest(".kc,[data-tip]");if(!c||c.dataset.dl)return;c.dataset.dl="1";const i=S.items.find(x=>x.id===c.dataset.kid);if(i&&i.kind==="linear"&&!DIG[i.ref])loadDigest(i)});
+  el.addEventListener("change",async e=>{const s=e.target.closest("select[data-kown]");if(!s)return;const i=S.items.find(x=>x.id===s.dataset.kown);if(!i||!s.value)return;
+    const u=(L.users||[]).find(x=>x.id===s.value);BX.own=BX.own||{};BX.own[i.id]={k:"wait",t:"Saving…"};renderBoard();rerenderP();
+    try{await mcp.callTool("Linear","save_issue",{id:i.ref,assignee:s.value});i.owner={kind:"user",name:u?u.name:s.value};BX.own[i.id]={k:"ok",t:"Assigned"};
+      if(db){try{await db.doc("items/"+i.id).update({owner:i.owner,owner_changed_at:new Date().toISOString()})}catch(x){}}}
+    catch(x){BX.own[i.id]={k:"bad",t:linErr(x)}}
+    renderBoard();setTimeout(()=>{delete BX.own[i.id];renderBoard();rerenderP()},4000)});
+}
+async function moveItem(id,bucket,sel){
+  if(!bucket||!db)return;sel.disabled=true;
+  try{await db.doc("items/"+id).update({bucket_request:bucket,bucket_request_at:new Date().toISOString()})}
+  catch(e){sel.disabled=false;inlineErr(sel,"Not saved. Try again.")}
+}
+function inlineErr(el,msg){const s=document.createElement("span");s.className="err";s.textContent=msg;el.after(s)}
+
+function renderQuestions(){
+  const open=S.questions.filter(q=>q.status==="open").sort((a,b)=>(a.asked_at||"").localeCompare(b.asked_at||""));
+  const done=S.questions.filter(q=>q.status==="answered");
+  $("questions").innerHTML=open.length?open.map(q=>`<article class="q" data-q="${esc(q.id)}"><div class="q-b">
+      <div class="eyebrow"><b>${esc(pname(q.project))}</b>${q.url?` · <a ${ext(q.url)}>Open in Linear</a>`:""}</div>
+      <p>${esc(q.text)}</p>
+      <div class="opts">${(q.options&&q.options.length?q.options:["Done","Today","This week","Next iteration","Someday"]).map(o=>`<button class="opt" type="button" data-a="${esc(o)}">${esc(o)}</button>`).join("")}</div>
+      <div class="row"><input type="text" id="qn-${esc(q.id)}" aria-label="Note" placeholder="Or a date or note (Oct 3, blocked on client)"><button class="btn" type="button" data-send>Send note</button></div>
+    </div></article>`).join(""):`<p class="empty">No open questions. Every pending item has a date or a stage.</p>`;
+  $("answered").innerHTML=done.map(q=>`<div class="answered"><span></span><span>${esc(q.text)}<br><b>${esc(q.answer)}</b> · applies at the next brief</span></div>`).join("");
+  $("questions").querySelectorAll("[data-q]").forEach(c=>{
+    const id=c.dataset.q;
+    c.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>answer(id,b.dataset.a,c));
+    c.querySelector("[data-send]").onclick=()=>{const v=c.querySelector("input").value.trim();if(v)answer(id,v,c)};
+  });
+}
+async function answer(id,val,c){
+  if(!db)return;c.querySelectorAll("button").forEach(b=>b.disabled=true);
+  const note=c.querySelector("input").value.trim();
+  try{await db.doc("questions/"+id).update({status:"answered",answer:note&&note!==val?val+" · "+note:val,answered_at:new Date().toISOString()})}
+  catch(e){c.querySelectorAll("button").forEach(b=>b.disabled=false);inlineErr(c.querySelector("[data-send]"),"Not saved. Try again.")}
+}
+
+const BREW_SQL=`with base as (select b.*, (coalesce(b.is_done,false) or coalesce(b.is_archived,false)) as closed from public.briefing_items b
+  where (coalesce(b.is_snoozed,false)=false or b.snooze_until<now())
+    and coalesce(b.quadrant,'')<>'news'
+    and (b.created_at>now()-interval '7 days' or b.user_priority='high' or (b.due_date between now()-interval '2 days' and now()+interval '7 days'))),
+ranked as (select *, row_number() over (partition by closed order by (user_priority='high') desc nulls last, is_urgent desc nulls last, priority_score desc nulls last, timestamp desc nulls last) rn from base)
+select r.id,r.is_done,r.is_archived,r.external_task_id,r.external_id,r.quadrant,r.category,r.title,coalesce(r.summary,r.body) as body,r.sender,r.source_url,r.timestamp,r.is_urgent,r.priority_score,r.user_priority,r.due_date,r.task_group,r.is_calendar_event,r.event_start,r.meeting_link,
+  lm.lm_text,lm.lm_at,lm.lm_me,lm.lm_link
+from ranked r
+left join lateral (select left(coalesce(nullif(w.text,''),nullif(w.caption,''),nullif(w.transcript,''),'['||w.message_type||']'),160) lm_text,w.timestamp lm_at,w.from_me lm_me,nullif(w.chat_link,'') lm_link
+  from public.whatsapp_messages w where r.quadrant='whatsapp' and w.chat_jid=split_part(r.external_id,'__',1) and w.reaction_to_id is null and coalesce(w.message_type,'') not in ('sticker','gif','reaction')
+  order by w.timestamp desc limit 1) lm on true
+where (not r.closed and r.rn<=120) or (r.closed and r.rn<=40)
+order by r.closed, r.rn`;
+const BREW={rows:null,err:null,loading:false,at:null,f:"all",who:"",grp:"",q:"",showDone:false,showCx:false};
+const isGrp=r=>/@g\.us/.test(String(r.external_id||""));
+const brewGrp=r=>isGrp(r)?String(r.sender||"").trim():"";
+const brewCon=r=>isGrp(r)?"":String(r.sender||"").trim();
+const brewWho=r=>String((r.quadrant==="whatsapp"?r.title:r.sender)||r.sender||r.title||"").trim();
+function brewRows(r){
+  let p=r&&r.payload;
+  if(p&&typeof p==="object"&&!Array.isArray(p))p=p.result??p.data??p;
+  if(!p&&r&&r.content){const t=r.content.find(c=>c.type==="text");p=t&&t.text}
+  if(Array.isArray(p))return p;
+  if(typeof p==="string"){try{const j=JSON.parse(p);if(Array.isArray(j))return j;if(j&&typeof j.result==="string")p=j.result}catch(e){}
+    const m=p.match(/<untrusted-data-[^>]*>\s*([\s\S]*?)\s*<\/untrusted-data/);const body=m?m[1]:p;
+    const a=body.indexOf("["),b=body.lastIndexOf("]");if(a>=0&&b>a)return JSON.parse(body.slice(a,b+1))}
+  throw {code:"bad_shape"};
+}
+async function loadBrew(force){
+  if(BREW.loading)return;if(!(CFG.brew&&CFG.brew.enabled&&CFG.brew.supabase_project)){BREW.err="Daily Brew is not configured for this radar.";renderBrew();return}if(!mcp){BREW.err="Daily Brew needs claude.ai with the Supabase connector.";renderBrew();return}
+  BREW.loading=true;BREW.err=null;renderBrew();
+  try{const r=await mcp.callTool("Supabase","execute_sql",{project_id:CFG.brew.supabase_project,query:BREW_SQL},{cache:force?false:{staleTime:300000}});
+    BREW.rows=brewRows(r);BREW.at=(r&&r.cache&&r.cache.storedAt)||Date.now()}
+  catch(e){const c=e&&e.code;BREW.rows=c==="needs_reauth"||c==="not_in_manifest"||c==="blocked_by_policy"?null:BREW.rows;
+    BREW.err=c==="needs_reauth"?"Reconnect Supabase in claude.ai Settings, Connectors.":c==="server_not_connected"||c==="selection_required"?"Add the Supabase connector in claude.ai Settings, Connectors.":c==="not_in_manifest"?"Supabase is turned off for this page.":c==="bad_shape"?"Supabase answered in an unexpected format.":c==="tool_error"?"Query failed: "+(e.message||""):"Supabase did not answer. Try Reload."}
+  BREW.loading=false;renderBrew();
+}
+function renderBrew(){
+  const st=$("brew-state");if(!st)return;
+  st.textContent=BREW.loading?"Loading…":BREW.err?BREW.err:BREW.at?"Updated "+fmtT(BREW.at):"Not loaded";
+  st.className=BREW.err?"err":"";
+  const allRows=BREW.rows||[];
+  const nDone=allRows.filter(r=>r.is_done&&!r.is_archived).length,nCx=allRows.filter(r=>r.is_archived).length;
+  const rows=allRows.filter(r=>r.is_archived?BREW.showCx:r.is_done?BREW.showDone:true);
+  const qs=[...new Set(rows.map(r=>r.quadrant||"other"))];
+  $("bfilter").innerHTML=[["all","All"],...qs.map(q=>[q,q.charAt(0).toUpperCase()+q.slice(1)])].map(([v,l])=>`<button class="chip" type="button" data-bf="${esc(v)}" aria-pressed="${BREW.f===v}">${esc(l)} <span class="mono">${v==="all"?rows.length:rows.filter(r=>(r.quadrant||"other")===v).length}</span></button>`).join("");
+  const inQ=rows.filter(r=>BREW.f==="all"||(r.quadrant||"other")===BREW.f);
+  const cnt=f=>{const c={};inQ.forEach(r=>{const w=f(r);if(w)c[w]=(c[w]||0)+1});return c};
+  const grpC=cnt(brewGrp),conC=cnt(brewCon);
+  const srt=c=>Object.keys(c).sort((a,b)=>c[b]-c[a]||a.localeCompare(b));
+  if(BREW.grp&&!grpC[BREW.grp])BREW.grp="";if(BREW.who&&!conC[BREW.who])BREW.who="";
+  const sel=(id,lab,all,c,cur)=>`<select id="${id}" class="bxs" aria-label="${lab}"><option value="">${all}</option>${srt(c).map(w=>`<option value="${esc(w)}" ${cur===w?"selected":""}>${esc(w)} (${c[w]})</option>`).join("")}</select>`;
+  $("bfilter").innerHTML+=`<button type="button" class="tg ${BREW.showDone?"on":""}" data-bdone aria-pressed="${BREW.showDone}">Done <span class="mono">${nDone}</span></button><button type="button" class="tg ${BREW.showCx?"on":""}" data-bcx aria-pressed="${BREW.showCx}">Canceled <span class="mono">${nCx}</span></button><span class="bwho">${sel("bgrp","Filter by group","All groups",grpC,BREW.grp)}${sel("bwho","Filter by contact","All contacts",conC,BREW.who)}<input type="search" id="bq" class="bq" placeholder="Search…" aria-label="Search Daily Brew" value="${esc(BREW.q)}"></span>`;
+  $("bfilter").querySelectorAll("[data-bf]").forEach(b=>b.onclick=()=>{BREW.f=b.dataset.bf;renderBrew()});
+  $("bfilter").querySelector("[data-bdone]").onclick=()=>{BREW.showDone=!BREW.showDone;renderBrew()};
+  $("bfilter").querySelector("[data-bcx]").onclick=()=>{BREW.showCx=!BREW.showCx;renderBrew()};
+  $("bwho").onchange=e=>{BREW.who=e.target.value;if(BREW.who)BREW.grp="";renderBrew()};
+  $("bgrp").onchange=e=>{BREW.grp=e.target.value;if(BREW.grp)BREW.who="";renderBrew()};
+  const bq=$("bq");bq.oninput=e=>{BREW.q=e.target.value;clearTimeout(BREW.qt);BREW.qt=setTimeout(()=>{renderBrew();const n=$("bq");if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length)}},250)};
+  const ql=BREW.q.trim().toLowerCase();
+  const list=inQ.filter(r=>(!BREW.grp||brewGrp(r)===BREW.grp)&&(!BREW.who||brewCon(r)===BREW.who)&&(!ql||[r.title,r.sender,r.body,r.category].join(" ").toLowerCase().includes(ql)));
+  $("n-brew").textContent=rows.filter(r=>!r.is_done&&!r.is_archived).filter(r=>r.user_priority==="high"||r.is_urgent).length||"";
+  $("brew").innerHTML=BREW.rows===null?(BREW.loading?"":`<p class="empty">${esc(BREW.err||"Open this tab to load your Daily Brew priorities.")}</p>`):list.length?list.map(r=>{
+    const sc=r.priority_score??null;const lvl=r.user_priority==="high"||r.is_urgent||sc>=85?"p1":sc>=65?"p2":"p3";
+    const when=r.is_calendar_event&&r.event_start?fmtT(r.event_start):r.due_date?"due "+fmtD(String(r.due_date).slice(0,10)):r.timestamp?fmtT(r.timestamp):"";
+    return `<article class="br ${lvl} ${r.is_archived?"cx":r.is_done?"dn":""} ${BX.open===r.id?"bx-open":""}" data-bid="${esc(r.id)}"><div class="sc"><b>${sc??"·"}</b><small>score</small></div>
+      <div class="bt"><div class="m">${r.user_priority==="high"?`<span class="flag blocker">your priority</span>`:""}${r.is_urgent?`<span class="flag overdue">urgent</span>`:""}<span class="src">${esc(r.quadrant||"")}</span>${r.category?`<span>${esc(r.category)}</span>`:""}${r.sender?`<span>${esc(r.sender)}</span>`:""}${when?`<span class="mono">${esc(when)}</span>`:""}</div>
+      <span class="s">${r.source_url?`<a ${ext(r.source_url)}>${esc(r.title||"(no title)")}</a>`:esc(r.title||"(no title)")}</span>
+      ${r.body?`<span class="w">${esc(String(r.body).slice(0,240))}</span>`:""}
+      ${(()=>{const L3=brewLinks(r);const LM=r.lm_at?`<div class="lm"><span class="lm-k">Last msg</span><span class="mono">${esc(fmtT(r.lm_at))}</span><span class="lm-t">${r.lm_me?"You: ":""}${esc(r.lm_text||"")}</span></div>`:"";return LM||L3?`<div class="lmrow">${LM}${L3}</div>`:""})()}
+      ${bxMsg(r)}</div>${bxBar(r)}<button type="button" class="bx-more" data-bx-toggle aria-expanded="${BX.open===r.id}" aria-label="Actions for ${esc(r.title||"item")}">⋯</button></article>`}).join(""):`<p class="empty">Nothing open in Daily Brew for this filter.</p>`;
+  bindBrew();
+  if(mcp&&!L.users&&!BX.uload){BX.uload=true;ensureUsers()}
+}
+function renderInbox(){renderBrew()}
+function brewLinks(r){const L2=[];const su=String(r.source_url||"");const lk=linkedOf(r);const jid=String(r.external_id||"").split("__")[0];
+  if(r.quadrant==="whatsapp"||/@(g\.us|s\.whatsapp\.net)$/.test(jid)){
+    const wl=r.lm_link||(/^\d+@s\.whatsapp\.net$/.test(jid)?"https://wa.me/"+jid.split("@")[0]:(/wa\.me\//.test(su)?su:""));
+    if(wl)L2.push(`<a class="lk wa" ${ext(wl)}>WhatsApp ↗</a>`);
+    if(/@g\.us$/.test(jid))L2.push(`<button type="button" class="lk wa" data-wa-ctx="${esc(r.id)}">Conversation</button>`);}
+  if(/mail\.google\.com/.test(su))L2.push(`<a class="lk gm" ${ext(su)}>Gmail ↗</a>`);
+  if(/calendar\.google\.com|google\.com\/calendar/.test(su))L2.push(`<a class="lk ca" ${ext(su)}>Calendar ↗</a>`);
+  if(r.meeting_link)L2.push(`<a class="lk ca" ${ext(r.meeting_link)}>Join meeting ↗</a>`);
+  if(lk&&linURL(lk))L2.push(`<a class="lk li" ${ext(linURL(lk))}>Linear ${esc(lk)} ↗</a>`);
+  if(/^https?:\/\//.test(su)&&!/wa\.me\/|mail\.google\.com|calendar\.google\.com|google\.com\/calendar/.test(su))L2.push(`<a class="lk" ${ext(su)}>Source ↗</a>`);
+  return L2.length?`<div class="blinks">${L2.join("")}</div>`:""}
+const BX={draft:{},busy:{},msg:{},open:null,uload:false};
+async function ensureUsers(){if(L.users||!mcp)return;try{const r=await mcp.callTool("Linear","list_users",{limit:250},{cache:{staleTime:300000}});L.users=(pay(r).users||[]).filter(u=>u.isActive!==false&&!/@linear\.linear\.app$/.test(u.email||""))}catch(e){}renderBrew()}
+const linkedOf=r=>/^[A-Z]+-\d+$/.test(r.external_task_id||"")?r.external_task_id:null;
+function friday(k){const d=parse(TODAY);const dw=d.getDay()===0?7:d.getDay();if(k===0&&dw>=5)return TODAY;d.setDate(d.getDate()+(5-dw)+7*k);return iso(d)}
+function brewProj(r){return evProject({summary:r.title||"",description:r.body||"",location:r.sender||"",attendees:[]})}
+function brewCtx(r){return `${r.title||"(no title)"}\n${r.sender?"From: "+r.sender+"\n":""}${r.body?String(r.body).slice(0,600)+"\n":""}${r.source_url||""}`}
+function codeURLb(r){const q=new URLSearchParams({prompt:`Daily Brew item (${r.quadrant||"item"}):\n${brewCtx(r)}\n\nHelp me turn this into code work. Ask which repo if it is not clear.`});return "https://claude.ai/code?"+q}
+function askURLb(r){const lk=linkedOf(r);const src=r.source_url||[r.quadrant,r.sender].filter(Boolean).join(" · ");
+  const q=new URLSearchParams({q:`Daily Brew${lk?"\nKey: "+lk:""}\nID: ${r.id}\nOrigen: ${src||"Daily Brew"}\n\n`});return "https://claude.ai/new?"+q}
+function bxMsg(r){const m=BX.msg[r.id];return m?`<span class="st-msg ${m.k}">${esc(m.t)}</span>`:""}
+const LP={list:null,loading:false};
+const normP=s=>String(s||"").toLowerCase().replace(/\s*[·\-–]\s*/g," ").replace(/\s+/g," ").trim();
+async function loadLP(){if(!mcp||LP.loading||LP.list)return;LP.loading=true;
+  try{const r=await mcp.callTool("Linear","list_projects",{...TEAM(),limit:50,fields:["name","status"]},{cache:{staleTime:600000}});
+    LP.list=(pay(r).projects||[]).filter(p=>!p.status||p.status.type!=="canceled").sort((a,b)=>String(a.name).localeCompare(String(b.name)))}catch(e){LP.list=[]}
+  LP.loading=false;BREW.rows&&renderBrew()}
+function guessLP(r){const p=brewProj(r);if(!p||!LP.list)return "";const ks=[p.linear_project,p.name].filter(Boolean).map(normP);
+  const hit=LP.list.find(x=>ks.includes(normP(x.name)))||LP.list.find(x=>ks.some(k=>normP(x.name).startsWith(k.split(" ")[0])));return hit?hit.id:""}
+function bxBar(r){const lk=linkedOf(r);if(!LP.list)loadLP();let d=BX.draft[r.id];if(!d)d=BX.draft[r.id]={project:""};if(!d.project&&!d.pTouched&&LP.list)d.project=guessLP(r);
+  const busy=BX.busy[r.id]?"disabled":"";
+  const projs=LP.list||[];
+  const opt=(v,l,sel)=>`<option value="${esc(v)}" ${sel?"selected":""}>${esc(l)}</option>`;
+  const users=(L.users||[]);
+  const tw=friday(0),nw=friday(1);
+  return `<div class="bx" role="toolbar" aria-label="Actions">
+    <a class="bxb go" ${ext(codeURLb(r))}>Code</a><a class="bxb" ${ext(askURLb(r))}>Ask</a>
+    ${lk?"":`<select class="bxs" data-bx="project" aria-label="Linear project" ${busy}>${opt("",LP.list?"Project…":"Projects (loading)",!d.project)}${projs.map(p=>opt(p.id,p.name,d.project===p.id)).join("")}</select>`}
+    <select class="bxs" data-bx="assignee" aria-label="Assign" ${busy}>${opt("",users.length?"Assign…":"Assign (loading)",!d.assignee)}${opt("me","Me",d.assignee==="me")}${users.map(u=>opt(u.id,u.name||u.email,d.assignee===u.id)).join("")}</select>
+    <select class="bxs" data-bx="priority" aria-label="Priority" ${busy}>${opt("","Priority…",d.priority==null)}${[[1,"Urgent"],[2,"High"],[3,"Medium"],[4,"Low"]].map(([v,l])=>opt(v,l,d.priority===v)).join("")}</select>
+    <button type="button" class="bxb ${d.due===tw?"on":""}" data-bx-due="${tw}" ${busy}>This week</button><button type="button" class="bxb ${d.due===nw?"on":""}" data-bx-due="${nw}" ${busy}>Next week</button>
+    ${lk?`<a class="bxb" ${ext(linURL(lk)||"#")}>${esc(lk)} ↗</a>`:`<button type="button" class="bxb pri" data-bx-create ${busy}>Create issue</button>`}
+    <button type="button" class="bxb ok" data-bx-done title="Mark done" ${busy}>✓ Done</button><button type="button" class="bxb no" data-bx-cancel title="Cancel" aria-label="Cancel" ${busy}>✕</button></div>`}
+function bindBrew(){const el=$("brew");if(el.dataset.bx)return;el.dataset.bx="1";
+  el.addEventListener("click",e=>{const row=e.target.closest("[data-bid]");if(!row)return;const id=row.dataset.bid;const r=(BREW.rows||[]).find(x=>String(x.id)===id);if(!r)return;
+    const t=e.target.closest("button");if(!t)return;
+    if(t.matches("[data-bx-toggle]")){BX.open=BX.open===id?null:id;renderBrew();return}
+    if(t.dataset.bxDue){const d=BX.draft[id];d.due=d.due===t.dataset.bxDue?null:t.dataset.bxDue;if(linkedOf(r))bxLinear(r,{dueDate:d.due},"Date saved in Linear");else renderBrew();return}
+    if(t.matches("[data-bx-create]"))return bxCreate(r);
+    if(t.matches("[data-bx-done]"))return bxClose(r,true);
+    if(t.matches("[data-bx-cancel]"))return bxClose(r,false)});
+  el.addEventListener("change",e=>{const s=e.target.closest("select[data-bx]");if(!s)return;const row=s.closest("[data-bid]");const id=row.dataset.bid;const r=(BREW.rows||[]).find(x=>String(x.id)===id);if(!r)return;
+    const d=BX.draft[id];const k=s.dataset.bx;d[k]=k==="priority"?(s.value===""?null:+s.value):s.value||"";if(k==="project")d.pTouched=true;
+    if(linkedOf(r)&&k!=="project"){bxLinear(r,k==="priority"?{priority:d.priority??0}:{assignee:d.assignee||null},k==="priority"?"Priority saved in Linear":"Assignee saved in Linear")}else renderBrew()});
+}
+const sqlStr=s=>"'"+String(s).replace(/'/g,"''")+"'";
+const UUIDRE=/^[0-9a-f-]{36}$/i;
+async function brewSQL(r,set){if(!UUIDRE.test(String(r.id)))throw {code:"bad_id"};
+  return mcp.callTool("Supabase","execute_sql",{project_id:CFG.brew.supabase_project,query:`update public.briefing_items set ${set}, updated_at=now() where id=${sqlStr(r.id)}`})}
+function bxSay(r,k,t){BX.msg[r.id]={k,t};renderBrew();if(k!=="wait")setTimeout(()=>{if(BX.msg[r.id]&&BX.msg[r.id].t===t){delete BX.msg[r.id];renderBrew()}},5000)}
+async function bxLinear(r,input,ok){if(!mcp)return;const lk=linkedOf(r);BX.busy[r.id]=1;bxSay(r,"wait","Saving…");
+  try{await mcp.callTool("Linear","save_issue",Object.assign({id:lk},input));bxSay(r,"ok",ok)}catch(e){bxSay(r,"bad",linErr(e))}delete BX.busy[r.id];renderBrew()}
+async function bxCreate(r){if(!mcp)return;const d=BX.draft[r.id];
+  if(!d.project){bxSay(r,"bad","Pick a Linear project first");return}
+  BX.busy[r.id]=1;bxSay(r,"wait","Creating in Linear…");
+  if(!CFG.linear_team)throw new Error("Set linear_team in config/app to create issues");
+  const input={team:CFG.linear_team,title:String(r.title||"Daily Brew item").slice(0,200),project:d.project,description:`From Daily Brew (${r.quadrant||"item"}${r.sender?", "+r.sender:""}).\n\n${r.body?String(r.body).slice(0,1500)+"\n\n":""}${r.source_url?"Source: "+r.source_url:""}`};
+  if(d.assignee)input.assignee=d.assignee;if(d.priority)input.priority=d.priority;if(d.due)input.dueDate=d.due;
+  try{const res=await mcp.callTool("Linear","save_issue",input);const p=pay(res);const ident=p.identifier||(p.issue&&(p.issue.identifier||p.issue.id))||p.id||"";
+    if(/^[A-Z]+-\d+$/.test(ident)){r.external_task_id=ident;try{await brewSQL(r,`external_task_id=${sqlStr(ident)}`)}catch(e){}bxSay(r,"ok","Created "+ident)}else bxSay(r,"ok","Created in Linear")}
+  catch(e){bxSay(r,"bad",linErr(e))}
+  delete BX.busy[r.id];renderBrew()}
+async function bxClose(r,done){if(!mcp)return;const lk=linkedOf(r);BX.busy[r.id]=1;bxSay(r,"wait",done?"Marking done…":"Canceling…");
+  try{if(lk)await mcp.callTool("Linear","save_issue",{id:lk,state:done?"Done":"Canceled"});
+    await brewSQL(r,done?"is_done=true":"is_archived=true");
+    if(done)r.is_done=true;else r.is_archived=true;delete BX.busy[r.id];renderBrew();
+    toast((lk?lk+" ":"")+(done?"marked done":"canceled")+(lk?" in Linear and Daily Brew":" in Daily Brew"))}
+  catch(e){delete BX.busy[r.id];bxSay(r,"bad",e&&e.code==="tool_error"?"Not saved: "+(e.message||""):linErr(e))}}
+
+
+function rerenderP(){renderProjects();renderFull()}
+S.full=null;let fullReturn=null;
+function openFull(slug,from){S.full=slug;fullReturn=from||null;document.body.style.overflow="hidden";renderFull();const b=document.querySelector("#full [data-close]");if(b)b.focus()}
+function closeFull(){if(S.full)delete L.issues[S.full];L.err=null;S.newOwnerFor=null;S.full=null;$("full").hidden=true;$("full").innerHTML="";document.body.style.overflow="";if(fullReturn&&document.body.contains(fullReturn))fullReturn.focus();else{const b=document.querySelector('[data-full]');if(b)b.focus()}}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&S.full)closeFull()});
+function renderFull(){
+  const el=$("full");const p=S.full&&proj(S.full);
+  if(!p){if(S.full)closeFull();return}
+  const keep=el.scrollTop;
+  const its=S.items.filter(i=>i.project===p.slug&&open(i));
+  const od=its.filter(isOD).length,nd=its.filter(i=>!i.due).length,dated=its.length-od-nd;
+  const st=p.stats||{};const pct=Math.max(0,Math.min(100,p.progress_pct||0));
+  const tot=Math.max(its.length,1),seg=n=>(100-pct)*n/tot;
+  const initial=(p.client||p.name||"?").trim()[0].toUpperCase();
+  const links=[p.linear_url&&`<a ${ext(p.linear_url)}>Linear</a>`,...(p.repos||[]).map(r=>`<a ${ext(r.url)}>${esc(r.name)}</a>`),p.deploy_url&&`<a ${ext(p.deploy_url)}>Live app</a>`].filter(Boolean).join("");
+  const alerts=(p.alerts||[]).map(a=>`<li><span class="sev ${esc(a.kind)}"></span><span>${a.url?`<a ${ext(a.url)}>${esc(a.text)}</a>`:esc(a.text)}</span></li>`).join("");
+  const days=[...Array(14)].map((_,k)=>{const d=new Date();d.setDate(d.getDate()+k);return d});
+  const odl=its.filter(isOD);
+  let strip=`<div class="c h od">Past<br>due</div>`+days.map(d=>{const wk=d.getDay()===0||d.getDay()===6;return `<div class="c h ${wk?"wk":""} ${iso(d)===TODAY?"today":""}">${d.toLocaleDateString("en-US",{weekday:"short"})}<br>${d.getDate()}</div>`}).join("");
+  strip+=`<div class="c od">${odl.length?`<span class="dot od" title="${esc(odl.map(i=>i.ref+" "+i.title).join("\n"))}">${odl.length}</span>`:""}</div>`+days.map(d=>{const k=iso(d);const hit=its.filter(i=>i.due===k);const wk=d.getDay()===0||d.getDay()===6;return `<div class="c ${wk?"wk":""}">${hit.length?`<span class="dot ${k===TODAY?"td":""}" title="${esc(hit.map(i=>i.ref+" "+i.title).join("\n"))}">${hit.length}</span>`:""}</div>`}).join("");
+  const groups=BUCKETS.map(([b,label])=>{
+    const list=its.filter(i=>(i.bucket||"unscheduled")===b).sort((x,y)=>(isOD(y)-isOD(x))||(x.due||"9").localeCompare(y.due||"9")||String(x.ref||"").localeCompare(String(y.ref||""),undefined,{numeric:true}));
+    if(!list.length)return "";
+    return `<div class="grp ${b}"><div class="grp-h"><h4>${label}</h4><span>${list.length}</span></div>${list.map(fullRow).join("")}</div>`}).join("")||`<p class="empty">No open items.</p>`;
+  const qs=S.questions.filter(q=>q.status==="open"&&q.project===p.slug);
+  const qhtml=qs.map(q=>`<article class="q" data-q="${esc(q.id)}"><div class="q-b"><p>${esc(q.text)}</p>
+      <div class="opts">${(q.options&&q.options.length?q.options:["Done","Today","This week","Next iteration","Someday"]).map(o=>`<button class="opt" type="button" data-a="${esc(o)}">${esc(o)}</button>`).join("")}</div>
+      <div class="row"><input type="text" id="fqn-${esc(q.id)}" aria-label="Note" placeholder="Or a date or note"><button class="btn" type="button" data-send>Send note</button></div></div></article>`).join("");
+  el.innerHTML=`<div class="full-top"><div class="in hdr">
+      <div class="mg" aria-hidden="true">${esc(initial)}</div>
+      <div><div class="eyebrow"><b>${esc(p.client||"Client")}</b>${p.target_date?` · target ${fmtD(p.target_date)}`:""}${p.next_milestone?` · next: ${esc(p.next_milestone)}`:""}</div><h2 id="full-title">${esc(p.name)}</h2><span class="pill pill-m h-${esc(p.health||"unknown")}">${esc((p.health||"unknown").replace("_"," "))}</span></div>
+      <div class="acts"><span class="pill h-${esc(p.health||"unknown")}">${esc((p.health||"unknown").replace("_"," "))}</span><button type="button" class="xbtn ${refreshBusy("project:"+p.slug)?"spin":""}" data-refresh="${esc(p.slug)}" aria-label="Refresh ${esc(p.name)} only" title="${esc(refreshTitle("project:"+p.slug))}" ${refreshBusy("project:"+p.slug)?"disabled":""}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></svg></button><button type="button" class="xbtn" data-close aria-label="Close full screen" title="Close (Esc)">${'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg>'}</button></div>
+    </div>${links?`<div class="in full-links">${links}</div>`:""}</div>
+    <div class="in full-body">
+      <aside class="full-side">
+        <div class="pane">
+          ${p.summary?`<p class="sum">${esc(p.summary)}</p>`:""}
+          <div class="prog">
+            <div class="stack" role="img" aria-label="${pct}% done, ${dated} dated, ${od} overdue, ${nd} without date"><i class="s-done" style="width:${pct}%"></i><i class="s-dated" style="width:${seg(dated)}%"></i><i class="s-od" style="width:${seg(od)}%"></i><i class="s-nd" style="width:${seg(nd)}%"></i></div>
+            <div class="legend"><span><i class="s-done"></i>${pct}% done</span><span><i class="s-dated"></i>${dated} dated</span><span><i class="s-od"></i>${od} overdue</span><span><i class="s-nd"></i>${nd} no date</span></div>
+          </div>
+          <div class="facts">
+            <div class="fact ${od?"bad":""}"><b>${od}</b><span>overdue</span></div>
+            <div class="fact"><b>${its.length}</b><span>open items</span></div>
+            <div class="fact ${nd?"bad":""}"><b>${nd}</b><span>need a date</span></div>
+            <div class="fact"><b>${st.gh_issues??"–"}</b><span>GitHub issues</span></div>
+            <div class="fact"><b>${st.open_prs??"–"}</b><span>open PRs</span></div>
+            <div class="fact ${st.failed_deploys?"bad":""}"><b>${st.failed_deploys??"–"}</b><span>failed deploys</span></div>
+          </div>
+        </div>
+        ${alerts?`<div class="pane"><h3>Alerts <span>${(p.alerts||[]).length}</span></h3><ul class="alerts">${alerts}</ul></div>`:""}
+        
+      </aside>
+      <div class="full-main">
+        <div class="pane"><h3>Next 14 days <span>past due in red</span></h3><div class="strip-wrap"><div class="strip">${strip}</div></div></div>
+        <div class="pane"><h3>All open items <span>${its.length}</span></h3>${L.err?`<p class="lin-note bad">${esc(L.err)}</p>`:(mcp?`<p class="lin-note">Owner: a Linear member, or an external person kept as a Linear label (Owner group, u:Name). Pick "+ New external owner" to add one.</p>`:"")}${groups}</div>
+      </div>
+    </div>`;
+  el.hidden=false;el.scrollTop=keep;
+  if(mcp&&!L.issues[p.slug]&&!L.loading[p.slug]&&!L.err)loadLinear(p.slug);
+  el.querySelectorAll("select.own").forEach(sel=>sel.addEventListener("change",()=>setOwner(sel.dataset.id,sel.value)));
+  el.querySelectorAll("[data-noadd]").forEach(b=>b.addEventListener("click",()=>addExternal(b.dataset.noadd)));
+  el.querySelectorAll(".newown input").forEach(inp=>inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addExternal(inp.id.slice(3))}if(e.key==="Escape"){e.stopPropagation();S.newOwnerFor=null;renderFull()}}));
+  el.querySelectorAll("[data-nocancel]").forEach(b=>b.addEventListener("click",()=>{S.newOwnerFor=null;renderFull()}));
+  el.querySelector("[data-close]").addEventListener("click",closeFull);
+  el.querySelectorAll("[data-refresh]").forEach(b=>b.addEventListener("click",()=>requestRefresh("project:"+b.dataset.refresh)));
+  el.querySelectorAll("select.st").forEach(sel=>sel.addEventListener("change",()=>setStatus(sel.dataset.id,sel.value,sel)));
+  el.querySelectorAll("select.bk").forEach(sel=>sel.addEventListener("change",()=>moveItem(sel.dataset.id,sel.value,sel)));
+  el.querySelectorAll("[data-q]").forEach(c=>{const id=c.dataset.q;
+    c.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>answer(id,b.dataset.a,c));
+    c.querySelector("[data-send]").onclick=()=>{const v=c.querySelector("input").value.trim();if(v)answer(id,v,c)}});
+}
+
+/* ---- Owner: Linear users + external owners as labels (Owner group, "u:Name") ---- */
+const OWN_GROUP="Owner (external)",OWN_PREFIX="u:";
+const L={users:null,labels:null,groupExists:false,issues:{},err:null,loading:{}};
+S.own={};S.newOwnerFor=null;
+function linErr(e){const c=e&&e.code;
+  if(c==="needs_reauth")return "Reconnect Linear in claude.ai Settings, Connectors.";
+  if(c==="server_not_connected"||c==="selection_required")return "Add or pick the Linear connector in claude.ai Settings, Connectors.";
+  if(c==="not_in_manifest")return "Linear is turned off for this page. Allow it to assign owners.";
+  if(c==="blocked_by_policy"||c==="approval_required")return "Your organization blocks this Linear action here.";
+  if(c==="tool_error")return "Linear refused: "+((e&&e.message)||"check the issue");
+  if(c==="server_unavailable"||c==="upstream_error")return "Linear did not answer. Check Linear before trying again.";
+  return "Owner editing needs Linear on claude.ai.";}
+const pay=r=>(r&&r.payload)||{};
+async function loadLinear(slug){
+  if(!mcp||L.loading[slug])return;L.loading[slug]=true;
+  const p=proj(slug);const lp=(p&&p.linear_project)||(p&&p.name);
+  try{
+    const jobs=[];
+    if(!L.users)jobs.push(mcp.callTool("Linear","list_users",{limit:250},{cache:{staleTime:300000}}).then(r=>{L.users=(pay(r).users||[]).filter(u=>u.isActive!==false&&!/@linear\.linear\.app$/.test(u.email||""))}));
+    if(!L.labels)jobs.push(refreshLabels());
+    const cfgName=(S.cfgProjects&&S.cfgProjects[slug]&&S.cfgProjects[slug].linear_project)||null;
+    jobs.push(mcp.callTool("Linear","list_issues",{project:cfgName||lp,limit:250,fields:["assignee","assigneeId","labels","status"]},{cache:false}).then(r=>{
+      const m={};(pay(r).issues||[]).forEach(x=>m[x.id]=x);L.issues[slug]=m}));
+    await Promise.all(jobs);L.err=null;
+  }catch(e){L.err=linErr(e)}
+  L.loading[slug]=false;renderFull();
+}
+async function refreshLabels(){
+  const r=await mcp.callTool("Linear","list_issue_labels",{includeGroups:true,limit:250},{cache:false});
+  const all=pay(r).labels||[];
+  L.groupExists=all.some(l=>l.isGroup&&l.name===OWN_GROUP);
+  L.labels=all.filter(l=>!l.isGroup&&(l.name||"").startsWith(OWN_PREFIX)).map(l=>l.name).sort((a,b)=>a.localeCompare(b));
+}
+function liveOf(i){const m=L.issues[i.project];return m&&m[i.ref]}
+function currentOwner(i){
+  const o=S.own[i.id];if(o&&o.cur)return o.cur;
+  const x=liveOf(i);if(!x)return L.issues[i.project]?{kind:"none"}:null;
+  const ext=(x.labels||[]).find(n=>String(n).startsWith(OWN_PREFIX));
+  if(ext)return {kind:"ext",name:ext};
+  if(x.assigneeId||x.assignee)return {kind:"user",id:x.assigneeId||null,name:x.assignee};
+  return {kind:"none"};
+}
+function ownerTag(i){
+  if(i.kind!=="linear")return "";const o=currentOwner(i);if(!o||o.kind==="none")return "";
+  return o.kind==="ext"?`<span class="who ext" title="External owner (Linear label)">${esc(o.name.slice(OWN_PREFIX.length))} · external</span>`:`<span class="who" style="--oc:${ownColor(o.name)}"><i></i>${esc(o.name||"")}</span>`;
+}
+function ownMsg(i){const o=S.own[i.id];return o&&o.text?`<span class="st-msg ${o.kind}">${esc(o.text)}</span>`:""}
+function ownerCtl(i){
+  if(!mcp)return "";
+  if(S.newOwnerFor===i.id)return `<span class="newown"><input type="text" id="no-${esc(i.id)}" aria-label="New external owner name" placeholder="Name, e.g. Rodrigo" maxlength="40"><button type="button" class="btn primary" data-noadd="${esc(i.id)}">Add</button><button type="button" class="btn" data-nocancel>Cancel</button></span>`;
+  const live=liveOf(i);
+  if(!L.issues[i.project]||!L.users||!L.labels)return `<select class="own" disabled aria-label="Owner of ${esc(i.ref)}"><option>${L.err?"Owner unavailable":"Loading owners…"}</option></select>`;
+  const o=currentOwner(i)||{kind:"none"};const busy=S.own[i.id]&&S.own[i.id].kind==="wait";
+  const val=o.kind==="user"?"u|"+(o.id||o.name):o.kind==="ext"?"x|"+o.name:"none";
+  const users=[...L.users];if(o.kind==="user"&&!users.some(u=>u.id===o.id||u.name===o.name))users.push({id:o.id||o.name,name:o.name});
+  const exts=[...L.labels];if(o.kind==="ext"&&!exts.includes(o.name))exts.push(o.name);
+  const op=(v,l)=>`<option value="${esc(v)}" ${v===val?"selected":""}>${esc(l)}</option>`;
+  return `<select class="own" id="own-${esc(i.id)}" data-id="${esc(i.id)}" aria-label="Owner of ${esc(i.ref)}" ${busy?"disabled":""}>
+    ${op("none","Unassigned")}
+    <optgroup label="Linear members">${users.map(u=>op("u|"+(u.id||u.name),u.name||u.email)).join("")}</optgroup>
+    <optgroup label="External (label)">${exts.map(n=>op("x|"+n,n.slice(OWN_PREFIX.length))).join("")}${op("new","+ New external owner…")}</optgroup></select>`;
+}
+async function setOwner(id,v){
+  const i=S.items.find(x=>x.id===id);if(!i||!mcp)return;
+  if(v==="new"){S.newOwnerFor=id;renderFull();const f=document.getElementById("no-"+id);if(f)f.focus();return}
+  const live=liveOf(i)||{};const prevExt=(live.labels||[]).filter(n=>String(n).startsWith(OWN_PREFIX));
+  const before=currentOwner(i);
+  let input={id:i.ref},next;
+  if(v==="none"){input.assignee=null;if(prevExt.length)input.removeLabels=prevExt;next={kind:"none"}}
+  else if(v.startsWith("u|")){const key=v.slice(2);const u=(L.users||[]).find(x=>x.id===key||x.name===key)||{id:key,name:key};
+    input.assignee=u.id||u.name;if(prevExt.length)input.removeLabels=prevExt;next={kind:"user",id:u.id,name:u.name}}
+  else{const name=v.slice(2);input.assignee=null;input.addLabels=[name];const rm=prevExt.filter(n=>n!==name);if(rm.length)input.removeLabels=rm;next={kind:"ext",name}}
+  S.own[id]={cur:next,kind:"wait",text:"Saving owner to Linear…"};renderFull();
+  try{
+    await mcp.callTool("Linear","save_issue",input);
+    if(live){live.assignee=next.kind==="user"?next.name:null;live.assigneeId=next.kind==="user"?next.id:null;live.labels=(live.labels||[]).filter(n=>!String(n).startsWith(OWN_PREFIX)).concat(next.kind==="ext"?[next.name]:[])}
+    S.own[id]={cur:next,kind:"ok",text:"Owner saved in Linear"};
+    if(db){try{await db.doc("items/"+id).update({owner:next.kind==="none"?null:{kind:next.kind,name:next.kind==="ext"?next.name.slice(OWN_PREFIX.length):next.name},owner_changed_at:new Date().toISOString()})}catch(e){}}
+  }catch(e){S.own[id]={cur:before,kind:"bad",text:linErr(e)}}
+  renderFull();setTimeout(()=>{if(S.own[id]&&S.own[id].kind!=="wait"){delete S.own[id];renderFull()}},4000);
+}
+async function addExternal(id){
+  const f=document.getElementById("no-"+id);const raw=(f&&f.value||"").trim().replace(/\s+/g," ");
+  if(!raw){if(f)f.focus();return}
+  const name=OWN_PREFIX+raw;
+  S.newOwnerFor=null;S.own[id]={cur:{kind:"ext",name},kind:"wait",text:"Creating "+raw+" in Linear…"};renderFull();
+  try{
+    await refreshLabels();
+    if(!L.labels.some(n=>n.toLowerCase()===name.toLowerCase())){
+      if(!L.groupExists){await mcp.callTool("Linear","save_issue_label",{name:OWN_GROUP,isGroup:true,groupType:"singleSelect",color:"#888780",description:"People outside Linear who own a task. Labels are named u:<name>."});L.groupExists=true}
+      await mcp.callTool("Linear","save_issue_label",{name,parent:OWN_GROUP,color:"#B07D00",description:"External owner (not a Linear user)."});
+      L.labels.push(name);L.labels.sort((a,b)=>a.localeCompare(b));
+    }
+    const existing=L.labels.find(n=>n.toLowerCase()===name.toLowerCase())||name;
+    delete S.own[id];await setOwner(id,"x|"+existing);
+  }catch(e){S.own[id]={cur:null,kind:"bad",text:linErr(e)};renderFull()}
+}
+
+function fullRow(i){
+  const flags=(i.flags||[]).filter(f=>f!=="no_date"||i.bucket!=="unscheduled").map(f=>`<span class="flag ${esc(f)}">${esc(f.replace(/_/g," "))}</span>`).join("");
+  const gh=i.github||{};
+  const ghl=[gh.issue_url&&`<a ${ext(gh.issue_url)}>GitHub issue</a>`,gh.pr_url&&`<a ${ext(gh.pr_url)}>PR ${esc(gh.pr_state||"")}</a>`,gh.ci&&`<span class="flag ${gh.ci==="failed"?"ci_failed":""}">CI ${esc(gh.ci)}</span>`].filter(Boolean).join(" · ");
+  let ctl;
+  if(i.kind==="linear"){
+    const pend=S.pending[i.id];const cur=pend?pend.status:i.status;
+    const opts=[...new Set([...STATUSES,cur].filter(Boolean))].map(v=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(v)}</option>`).join("");
+    ctl=`<div class="ctls"><select class="st" id="fst-${esc(i.id)}" data-id="${esc(i.id)}" aria-label="Status of ${esc(i.ref)}" ${pend&&pend.kind==="wait"?"disabled":""}>${opts}</select>${ownerCtl(i)}</div>`;
+  }else{
+    ctl=`<select class="st bk" id="fbk-${esc(i.id)}" data-id="${esc(i.id)}" aria-label="Move ${esc(i.title)}"><option value="">Move to…</option>${BUCKETS.slice(0,4).map(([v,l])=>`<option value="${v}">${l}</option>`).join("")}<option value="done">Done</option></select>`;
+  }
+  const pend=S.pending[i.id];
+  const msg=pend?`<span class="st-msg ${pend.kind}">${esc(pend.text)}</span>`:(i.status_request?`<span class="st-msg wait">→ ${esc(i.status_request)} at next brief</span>`:(i.bucket_request?`<span class="moved">→ ${esc(BL[i.bucket_request]||"Done")} at next brief</span>`:""));
+  return `<div class="row2 ${isOD(i)?"od":""}"><span class="t"><a ${ext(i.url||"#")}>${esc(i.title)}</a></span>${ctl}
+    <span class="m"><span class="ref">${esc(i.kind==="idea"?"IDEA":i.ref||i.kind)}</span>${i.status?`<span>${esc(i.status)}</span>`:""}${ownerTag(i)}<span class="mono">${fmtD(i.due)}</span>${flags}${ghl?` · ${ghl}`:""}${msg}${ownMsg(i)}</span></div>`;
+}
+
+
+/* ---- Refresh: fires the radar scheduled task, full or scoped to one project ---- */
+const RUN_SERVER="Claude Code Remote";
+S.refresh=[];const R_LOCAL={};
+const RMAX=25*60*1000;
+function latestRefresh(scope){
+  const all=S.refresh.filter(r=>r.scope===scope||(scope.startsWith("project:")&&r.scope==="all"));
+  const loc=R_LOCAL[scope];const list=loc?[loc,...all]:all;
+  return list.sort((a,b)=>(b.requested_at||"").localeCompare(a.requested_at||""))[0];
+}
+function refreshBusy(scope){const r=latestRefresh(scope);if(!r)return false;
+  const live=r.status==="queued"||r.status==="running"||r.status==="sending";
+  return live&&(Date.now()-new Date(r.requested_at).getTime())<RMAX}
+function refreshTitle(scope){const r=latestRefresh(scope);
+  if(refreshBusy(scope))return r.status==="running"?"Updating now…":"Starting update…";
+  return scope==="all"?"Run the radar again for all projects":"Update only this project (Linear, GitHub, deploys)"}
+function refreshNote(scope){const r=latestRefresh(scope);if(!r||r.scope!==scope)return "";
+  const age=Date.now()-new Date(r.finished_at||r.requested_at).getTime();
+  if(refreshBusy(scope))return `<p class="rnote">${r.status==="running"?"Updating this project now. Takes 1 to 3 minutes.":"Update requested. Starting…"}</p>`;
+  if(r.status==="error"&&age<36e5)return `<p class="rnote bad">Last update failed: ${esc(r.error||"unknown error")}</p>`;
+  if((r.status==="queued"||r.status==="running")&&age>=RMAX)return `<p class="rnote bad">The last update did not report back. Try again.</p>`;
+  if(r.status==="done"&&age<15*60000)return `<p class="rnote">Updated ${esc(fmtT(r.finished_at))}${r.summary?" · "+esc(r.summary):""}</p>`;
+  return "";}
+function renderRefresh(){
+  const b=$("rall");if(!b)return;const busy=refreshBusy("all");const r=latestRefresh("all");
+  b.disabled=busy;b.classList.toggle("spin",busy);b.title=refreshTitle("all");
+  const st=$("rstate");st.className="rstate";
+  if(!mcp){st.textContent="";b.hidden=!db;}
+  if(busy)st.textContent=r.status==="running"?"Updating all…":"Starting…";
+  else if(r&&r.scope==="all"&&r.status==="error"&&Date.now()-new Date(r.finished_at||r.requested_at).getTime()<36e5){st.textContent="Update failed";st.className="rstate bad";st.title=r.error||""}
+  else st.textContent="";
+}
+function runErr(e){const c=e&&e.code;
+  if(c==="no_trigger")return "No brief task is linked to this radar yet. Run radar-setup.";
+  if(c==="needs_reauth")return "Reconnect Claude Code Remote in claude.ai Settings, Connectors.";
+  if(c==="server_not_connected"||c==="selection_required")return "Claude Code Remote is not available for this view.";
+  if(c==="not_in_manifest")return "Running the radar is turned off for this page. Allow it and try again.";
+  if(c==="tool_error")return "The scheduled task refused: "+((e&&e.message)||"");
+  if(c==="server_unavailable"||c==="upstream_error")return "No answer from the scheduler. Wait a minute before trying again, a run may have started.";
+  return "Could not start the update here. Open the radar on claude.ai.";}
+async function requestRefresh(scope){
+  if(refreshBusy(scope))return;
+  if(!mcp){R_LOCAL[scope]={scope,status:"error",error:"Running updates needs claude.ai with connectors.",requested_at:new Date().toISOString(),finished_at:new Date().toISOString()};renderAll();return}
+  const id="r"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const now=new Date().toISOString();
+  R_LOCAL[scope]={id,scope,status:"sending",requested_at:now};renderAll();
+  if(db){try{await db.doc("refresh/"+id).set({scope,status:"queued",requested_at:now,source:"dashboard"})}catch(e){}}
+  const text=`MANUAL REFRESH scope=${scope} id=${id}. Follow the "Manual refresh from the dashboard" section of your instructions.`;
+  try{
+    if(!CFG.brief_trigger)throw {code:"no_trigger",message:"Run radar-setup to create the brief task"};
+    await mcp.callTool(RUN_SERVER,"fire_trigger",{trigger_id:CFG.brief_trigger,text});
+    R_LOCAL[scope]={id,scope,status:"queued",requested_at:now};
+  }catch(e){
+    const msg=runErr(e);R_LOCAL[scope]={id,scope,status:"error",error:msg,requested_at:now,finished_at:new Date().toISOString()};
+    if(db){try{await db.doc("refresh/"+id).update({status:"error",error:msg,finished_at:new Date().toISOString()})}catch(x){}}
+  }
+  renderAll();
+}
+function initFold(){document.querySelectorAll(".sec.fold").forEach(s=>{let st=null;try{st=localStorage.getItem("fold-"+s.id)}catch(e){}
+  const closed=st?st==="1":s.dataset.default==="closed";s.classList.toggle("closed",closed);
+  const h=s.querySelector(".sec-h");h.setAttribute("role","button");h.tabIndex=0;h.setAttribute("aria-expanded",String(!closed));h.title="Click to collapse or expand";
+  h.addEventListener("click",e=>{if(e.target.closest("button,a,select,input"))return;toggleSec(s)});
+  h.addEventListener("keydown",e=>{if(e.target!==h)return;if(e.key==="Enter"||e.key===" "){e.preventDefault();toggleSec(s)}})})}
+function toggleSec(s,force){const c=force!==undefined?force:!s.classList.contains("closed");s.classList.toggle("closed",c);s.querySelector(".sec-h").setAttribute("aria-expanded",String(!c));try{localStorage.setItem("fold-"+s.id,c?"1":"0")}catch(e){}}
+function openSec(id){const s=$(id);if(s&&s.classList.contains("closed"))toggleSec(s,false)}
+initFold();
+(function(){const m=document.createElement("div");m.id="wamodal";m.className="wam";m.hidden=true;m.innerHTML=`<div class="wam-bg" data-wam-x></div><div class="wam-box" role="dialog" aria-modal="true" aria-labelledby="wam-t"><div class="wam-h"><div><div class="eyebrow">WhatsApp group · context</div><h3 id="wam-t"></h3></div><div class="wam-a"><a class="bxb" id="wam-open" href="https://web.whatsapp.com/" target="_blank" rel="noopener">Open WhatsApp ↗</a><button type="button" class="xbtn" data-wam-x aria-label="Close"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg></button></div></div><div class="wam-l" id="wam-l"></div></div>`;document.body.appendChild(m);
+  m.addEventListener("click",e=>{if(e.target.closest("[data-wam-x]")){m.hidden=true;document.body.style.overflow=""}});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!m.hidden){m.hidden=true;document.body.style.overflow=""}});
+  $("wam-open").addEventListener("click",()=>{const g=$("wam-t").textContent;if(g){copyText(g);toast(`Group name copied: in WhatsApp press Cmd+F and paste it`)}});
+})();
+async function openWaCtx(r){const m=$("wamodal"),l=$("wam-l");$("wam-t").textContent=r.sender||"Group";l.innerHTML=`<p class="empty">Loading messages…</p>`;m.hidden=false;document.body.style.overflow="hidden";
+  const jid=String(r.external_id||"").split("__")[0];if(!/^\d+@g\.us$/.test(jid)||!mcp){l.innerHTML=`<p class="empty">${mcp?"No chat id for this item.":"Needs Supabase on claude.ai."}</p>`;return}
+  const t=new Date(r.timestamp||Date.now());const ts=isNaN(t)?new Date().toISOString():t.toISOString();
+  const q=`select w.timestamp, w.from_me, coalesce(c.display_name,c.name,w.sender) who, left(coalesce(nullif(w.text,''),nullif(w.caption,''),nullif(w.transcript,''),'['||w.message_type||']'),1200) txt
+from public.whatsapp_messages w left join lateral (select display_name,name from public.contacts c where w.sender_jid = any(c.whatsapp_jids) and coalesce(c.ignored,false)=false and c.merged_into is null limit 1) c on true
+where w.chat_jid=${sqlStr(jid)} and w.timestamp between timestamptz ${sqlStr(ts)} - interval '36 hours' and timestamptz ${sqlStr(ts)} + interval '12 hours' and w.reaction_to_id is null and coalesce(w.message_type,'') not in ('sticker','gif')
+order by w.timestamp desc limit 80`;
+  try{const res=await mcp.callTool("Supabase","execute_sql",{project_id:CFG.brew.supabase_project,query:q},{cache:{staleTime:120000}});const rows=brewRows(res).reverse();
+    if(!rows.length){l.innerHTML=`<p class="empty">No messages around this item.</p>`;return}
+    let lastDay="";l.innerHTML=rows.map(x=>{const d=new Date(x.timestamp);const day=d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});const sep=day!==lastDay?`<div class="wam-day">${esc(day)}</div>`:"";lastDay=day;
+      const who=String(x.who||"").replace(/@lid$/,"").replace(/^Número\s+/,"+");
+      return sep+`<div class="wam-m ${x.from_me?"me":""}"><div class="wam-w"><b style="color:${x.from_me?"var(--lb-core)":ownColor(who)}">${esc(x.from_me?"You":who)}</b><span class="mono">${esc(d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}))}</span></div><div class="wam-x">${esc(x.txt||"")}</div></div>`}).join("");
+    l.scrollTop=l.scrollHeight}
+  catch(e){l.innerHTML=`<p class="empty">${esc(e&&e.code==="needs_reauth"?"Reconnect Supabase in claude.ai Settings, Connectors.":"Could not load messages.")}</p>`}}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-wa-ctx]");if(!b)return;const r=(BREW.rows||[]).find(x=>String(x.id)===b.dataset.waCtx);if(r)openWaCtx(r)});
+document.addEventListener("click",e=>{const a=e.target.closest("a[data-wa-group]");if(!a)return;const g=a.dataset.waGroup;if(g)copyText(g);toast(g?`Group name copied: in WhatsApp press Cmd+F and paste "${g}"`:"Opening WhatsApp")});
+function copyText(t){let ok=false;try{const ta=document.createElement("textarea");ta.value=t;ta.setAttribute("readonly","");ta.style.cssText="position:fixed;top:-1000px;opacity:0";document.body.appendChild(ta);ta.select();ok=document.execCommand("copy");ta.remove()}catch(x){}
+  try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).catch(()=>{})}catch(x){}return ok}
+document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest('a[href^="https://claude.ai/code"]');if(!a)return;
+  let p="";try{const u=new URL(a.href);p=u.searchParams.get("prompt")||"";const r=u.searchParams.get("repositories");if(r)p+="\nRepo: "+r}catch(x){}
+  if(p){copyText(p);try{toast("Context copied. If Claude Code opens without it, paste it (Cmd+V).")}catch(x){}}},true);
+let CM=null;(async()=>{try{CM=await window.claude?.use?.("comments")}catch(x){CM=null}})();
+const ASK={el:null,anchor:null,href:"",q:""};
+(function(){const p=document.createElement("div");p.id="askpop";p.className="askpop";p.hidden=true;p.setAttribute("role","dialog");p.setAttribute("aria-label","Ask Claude");
+  p.innerHTML=`<div class="ap-h">Ask Claude in this artifact's chat</div><textarea id="ap-t" rows="5" maxlength="3800" aria-label="Your question"></textarea><div class="ap-a"><button type="button" class="bxb pri" id="ap-send">Send to Claude</button><button type="button" class="bxb" id="ap-new">New chat instead</button><button type="button" class="bxb" id="ap-x">Cancel</button><span class="ap-m" id="ap-m"></span></div>`;
+  document.body.appendChild(p);
+  const close=()=>{p.hidden=true;ASK.el=null};
+  $("ap-x").onclick=close;
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!p.hidden)close()});
+  $("ap-new").onclick=()=>{const t=$("ap-t").value.trim();copyText(t);const w=window.open(ASK.href,"_blank");try{if(w)w.opener=null}catch(x){}toast(w===null?"Context copied. This view can't open new tabs: start a new chat and paste (Cmd+V).":"Context copied and new chat opened.");close()};
+  $("ap-send").onclick=async()=>{const t=$("ap-t").value.trim();if(!t)return;const m=$("ap-m");const b=$("ap-send");b.disabled=true;m.textContent="Sending…";
+    try{const st=await CM.canSendToClaude().catch(()=>"off");
+      if(st!=="available"){m.textContent=st==="no_session"?"No Claude session is listening right now.":st==="writers_only"?"Only editors can send to Claude.":"Sending to Claude is off in this view.";
+        if(ASK.el&&document.body.contains(ASK.el)){copyText(t);try{await CM.openComposer({element:ASK.el});toast("Text copied. Paste it in the comment box and press Send to Claude.");close()}catch(x){}}b.disabled=false;return}
+      const anchor=ASK.anchor||(ASK.el&&document.body.contains(ASK.el)?await CM.anchorFor(ASK.el):null);if(!anchor)throw {code:"invalid"};
+      await CM.sendToClaude({anchor,text:t});toast("Sent to Claude. The reply shows up in this artifact's comments.");close()}
+    catch(x){const c=x&&x.code;m.textContent=c==="consent_required"?"Allow comments for this page and try again.":c==="rate_limited"?"Too fast. Wait a moment.":c==="claude_unavailable"?"Claude can't take it right now. Try New chat.":"Could not send. Try New chat."}
+    b.disabled=false};
+})();
+document.addEventListener("click",async e=>{const a=e.target.closest('a[href^="https://claude.ai/new"]');if(!a)return;let q="";try{q=new URL(a.href).searchParams.get("q")||""}catch(x){}
+  e.preventDefault();
+  const el=a.closest("[data-bid],[data-kid],#jump,.pi,li")||a;
+  if(!CM){if(q)copyText(q.trim());const w=window.open(a.href,"_blank");try{if(w)w.opener=null}catch(x){}toast(w===null?"Context copied. This view can't open new tabs: start a new chat and paste (Cmd+V).":"Context copied and new chat opened.");return}
+  ASK.el=el;ASK.href=a.href;ASK.q=q;ASK.anchor=null;try{ASK.anchor=await CM.anchorFor(el)}catch(x){}
+  const p=$("askpop");$("ap-t").value=(q.trim()?q.trim()+"\n\n":"");$("ap-m").textContent="";p.hidden=false;
+  const r=el.getBoundingClientRect();const w=Math.min(440,innerWidth-24);p.style.width=w+"px";p.style.left=Math.max(12,Math.min(r.left,innerWidth-w-12))+"px";
+  const below=r.bottom+8;p.style.top=(below+240>innerHeight?Math.max(12,r.top-8-p.offsetHeight):below)+"px";
+  const ta=$("ap-t");ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length)});
+$("rall").addEventListener("click",()=>requestRefresh("all"));
+$("brew-reload").addEventListener("click",()=>loadBrew(true));
+document.querySelector('.tab[data-tab="brew"]').addEventListener("click",()=>{if(!BREW.rows&&!BREW.loading)loadBrew(false)});
+setInterval(()=>{if(S.refresh.some(r=>r.status==="queued"||r.status==="running")||Object.keys(R_LOCAL).length)renderAll()},30000);
+
+function renderAll(){renderRefresh();renderHero();renderDueMap();renderProjects();renderFilter();renderBoard();renderInbox();renderFull()}
+applyCfg(null);renderAll();
+
+(async()=>{
+  try{db=await window.claude?.use?.("db")}catch(e){db=null}
+  try{mcp=await window.claude?.use?.("mcp")}catch(e){mcp=null}
+  if(!db){$("nodb").hidden=false;$("stamp").textContent="Offline";return}
+  $("live").classList.remove("off");
+  const sub=(path,key,after)=>db.collection(path).onSnapshot(s=>{S[key]=s.docs.map(d=>({id:d.id,...d.data()}));if(after)after();renderAll()},()=>{});
+  let cfgFirst=true;db.doc("config/app").onSnapshot(d=>{applyCfg(d.exists?d.data():null);if(cfgFirst){cfgFirst=false;if(!$("p-brew").hidden)loadBrew(false)}renderAll()},()=>{applyCfg(null)});
+  db.doc("config/main").onSnapshot(d=>{S.cfgProjects=d.exists?(d.data().projects||{}):{}},()=>{});
+  db.doc("meta/latest").onSnapshot(d=>{S.meta=d.exists?d.data():null;renderAll()},()=>{});
+  sub("projects","projects",()=>S.projects.sort((a,b)=>(a.order??99)-(b.order??99)));
+  sub("items","items");
+  db.collection("refresh").orderBy("requested_at","desc").limit(20).onSnapshot(s=>{S.refresh=s.docs.map(d=>({id:d.id,...d.data()}));Object.keys(R_LOCAL).forEach(k=>{const l=R_LOCAL[k];if(l.id&&S.refresh.some(r=>r.id===l.id&&r.status!=="queued"))delete R_LOCAL[k]});renderAll()},()=>{});
+})();
+</script>

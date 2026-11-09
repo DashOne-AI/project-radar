@@ -1,0 +1,63 @@
+{
+  "$schema": "./config.schema.json",
+  "instance": "acme",
+  "brand": "Acme",
+  "mark": "A",
+  "linear_team": "Acme",
+  "linear_workspace": "acme",
+  "only_listed_projects": false,
+  "timezone": "America/New_York",
+  "brief_time": "09:00",
+  "brief_language": "en",
+  "people": [
+    {
+      "name": "Alex",
+      "match": "alex|alexandra",
+      "color": "#2F3BFF",
+      "is_me": true
+    },
+    {
+      "name": "Sam",
+      "match": "sam|samuel",
+      "color": "#FF6B5E"
+    }
+  ],
+  "calendars": [
+    "primary"
+  ],
+  "stopwords": [
+    "acme"
+  ],
+  "projects": [
+    {
+      "slug": "website",
+      "name": "Website relaunch",
+      "linear_project": "Website relaunch",
+      "client": "Acme",
+      "repos": [
+        {
+          "name": "acme/website",
+          "url": "https://github.com/acme/website"
+        }
+      ],
+      "links": [
+        {
+          "label": "Staging",
+          "url": "https://staging.acme.com"
+        }
+      ]
+    }
+  ],
+  "brew": {
+    "enabled": false,
+    "label": "Inbox",
+    "supabase_project": ""
+  },
+  "delivery": {
+    "session": true,
+    "push": true,
+    "whatsapp_chat": ""
+  },
+  "ask_template": "{ref} · {title}\n{url}\n\nRead {ref} in Linear (description and comments) and help me with: ",
+  "code_template": "Work on Linear issue {ref}: {title}\n{url}\nRead the issue with the Linear connector first (description and comments), then propose a plan before changing code."
+}

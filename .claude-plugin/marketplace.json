@@ -1,0 +1,19 @@
+{
+  "name": "project-radar",
+  "owner": {
+    "name": "DashOne"
+  },
+  "metadata": {
+    "description": "Project Radar: a live Linear-backed dashboard artifact for Claude, with setup, sync, daily brief and update skills.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "project-radar",
+      "source": "./",
+      "description": "A live project radar for Claude: dashboard artifact mirrored from Linear, plus skills to install, sync, brief and update it. Configured per account with one JSON file.",
+      "version": "1.0.0",
+      "license": "MIT"
+    }
+  ]
+}

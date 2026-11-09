@@ -1,0 +1,31 @@
+{
+  "comments": {},
+  "db": {},
+  "mcp": {
+    "servers": [
+      {
+        "server": "Linear",
+        "required": true,
+        "tools": ["save_issue", "list_users", "list_issue_labels", "save_issue_label", "list_issues", "get_issue", "list_projects"]
+      },
+      {
+        "server": "Claude Code Remote",
+        "required": false,
+        "why": "Refresh button: fires the brief scheduled task on demand.",
+        "tools": ["fire_trigger"]
+      },
+      {
+        "server": "Google Calendar",
+        "required": false,
+        "why": "Key events strip.",
+        "tools": ["list_events"]
+      },
+      {
+        "server": "Supabase",
+        "required": false,
+        "why": "Only when brew.enabled is true in the config.",
+        "tools": ["execute_sql"]
+      }
+    ]
+  }
+}

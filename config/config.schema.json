@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/DashOne-AI/project-radar/config/config.schema.json",
+  "title": "Project Radar instance config",
+  "description": "One file per radar instance (one per Claude account or context). Keep it in a private repo, never in this one.",
+  "type": "object",
+  "required": [
+    "instance",
+    "linear_team"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "instance": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Short id for this radar, e.g. acme, personal."
+    },
+    "brand": {
+      "type": "string",
+      "description": "Name shown next to 'Project Radar' in the header. Empty for none."
+    },
+    "mark": {
+      "type": "string",
+      "maxLength": 1,
+      "description": "One letter for the logo badge. Defaults to the first letter of brand."
+    },
+    "linear_team": {
+      "type": "string",
+      "description": "Linear team name or key the radar reads and writes."
+    },
+    "linear_workspace": {
+      "type": "string",
+      "description": "Linear workspace slug, used to build issue links (linear.app/<slug>/issue/KEY)."
+    },
+    "only_listed_projects": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, the radar only syncs issues from the Linear projects listed in projects. Use it when several radars share one Linear team."
+    },
+    "artifact_url": {
+      "type": "string",
+      "description": "URL of this instance's radar artifact, once installed. Lets radar-setup and radar-update find it."
+    },
+    "timezone": {
+      "type": "string",
+      "description": "IANA time zone for due dates and the daily brief."
+    },
+    "brief_time": {
+      "type": "string",
+      "pattern": "^[0-2][0-9]:[0-5][0-9]$",
+      "description": "Local time of the daily brief."
+    },
+    "brief_language": {
+      "type": "string",
+      "description": "Language of the brief and WhatsApp message, e.g. en, es."
+    },
+    "brief_trigger": {
+      "type": "string",
+      "description": "Scheduled task id of the brief. Written by radar-setup; leave empty in new configs."
+    },
+    "people": {
+      "type": "array",
+      "description": "People who own issues. match is a case-insensitive regex tested against the Linear assignee name.",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "match",
+          "color"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "match": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          },
+          "is_me": {
+            "type": "boolean",
+            "description": "The radar owner. New issues are assigned to this person by default."
+          }
+        }
+      }
+    },
+    "calendars": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Google Calendar ids for Key events. 'primary' is the connected account."
+    },
+    "stopwords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Words ignored when matching calendar events to projects (your name, company name)."
+    },
+    "projects": {
+      "type": "array",
+      "description": "Seed for the projects collection. Every project must exist in Linear.",
+      "items": {
+        "type": "object",
+        "required": [
+          "slug",
+          "name",
+          "linear_project"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "slug": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "linear_project": {
+            "type": "string"
+          },
+          "client": {
+            "type": "string"
+          },
+          "order": {
+            "type": "number"
+          },
+          "repos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "brew": {
+      "type": "object",
+      "description": "Optional inbox tab backed by a Daily Brew style Supabase schema (briefing_items, whatsapp_messages, contacts).",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "label": {
+          "type": "string"
+        },
+        "supabase_project": {
+          "type": "string",
+          "description": "Supabase project ref. Read through the Supabase connector, never with keys in the page."
+        }
+      }
+    },
+    "delivery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "session": {
+          "type": "boolean",
+          "description": "Post the brief as the scheduled task's final message."
+        },
+        "push": {
+          "type": "boolean"
+        },
+        "whatsapp_chat": {
+          "type": "string",
+          "description": "Chat name or JID for the WhatsApp brief. Empty to skip."
+        }
+      }
+    },
+    "ask_template": {
+      "type": "string",
+      "description": "Text for the Ask button. Placeholders: {ref} {title} {url}."
+    },
+    "code_template": {
+      "type": "string",
+      "description": "Prompt for the Code button. Placeholders: {ref} {title} {url}."
+    }
+  }
+}

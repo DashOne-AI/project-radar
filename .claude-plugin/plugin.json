@@ -1,0 +1,13 @@
+{
+  "name": "project-radar",
+  "version": "1.0.0",
+  "description": "A live project radar for Claude: a dashboard artifact that mirrors your Linear projects, plus skills to install it, sync it, write a daily brief and update it. Works for any person, team or client through one config file.",
+  "author": {
+    "name": "DashOne",
+    "url": "https://dashone.ai"
+  },
+  "homepage": "https://github.com/DashOne-AI/project-radar",
+  "repository": "https://github.com/DashOne-AI/project-radar",
+  "license": "MIT",
+  "keywords": ["linear", "dashboard", "artifact", "project-tracking", "daily-brief", "radar"]
+}
